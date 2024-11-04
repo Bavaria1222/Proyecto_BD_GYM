@@ -1,7 +1,8 @@
 package com.example.backend_gym.Controller;
 
-import com.example.backend_gym.Entity.Gimnasio;
-import com.example.backend_gym.Repository.GimnasioRepository;
+
+import com.example.backend_gym.Entity.Cliente;
+import com.example.backend_gym.Repository.ClienteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,17 +13,12 @@ import java.util.List;
 
 @RestController
 @RequestMapping({"/api"})
-public class GimnasioController {
-
+public class ClienteController {
     @Autowired
-    GimnasioRepository gimnasioRepository;
+    ClienteRepository clienteRepository;
 
-    @GetMapping("Gimnnasio")
-    public ResponseEntity<List<Gimnasio>> getGimnasio(){
-        return ResponseEntity.ok(gimnasioRepository.findAll());
+    @GetMapping ("Cliente")
+    public ResponseEntity<List<Cliente>> getCliente() {
+        return ResponseEntity.ok(clienteRepository.findAll());
     }
-
-
-
-
 }

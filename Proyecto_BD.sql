@@ -164,6 +164,9 @@ CREATE TABLE Rutina (
 ------------------------- **FIN** CREACION DE LAS TABLAS  -------------------------------------
 
 
+
+
+
 -------------------------  CREACION DE LOS ROLES Y ASIGNACION DE PRIVILEGIOS  -------------------------------------
 
 --Rol empleado_mantenimiento
@@ -214,6 +217,50 @@ BEGIN
     EXECUTE IMMEDIATE 'GRANT empleado_mantenimiento TO "' || p_cedula || '"';
 END;
 /
+
+
+--Crea un tigger para guardar los registros de un curso
+
+CREATE OR REPLACE PROCEDURE registrar_asistencia_curso (
+    p_id_membresia IN INT,
+    p_id_curso IN INT,
+    p_horas IN INT
+)
+AS
+    v_membresia_activa INT;
+BEGIN
+    -- Verificar si la membresía está activa
+    SELECT COUNT(*) INTO v_membresia_activa
+    FROM Membresia
+    WHERE id_membresia = p_id_membresia
+    AND estado = 'activo'
+    AND SYSDATE BETWEEN fecha_inicio AND fecha_fin;
+
+    IF v_membresia_activa = 0 THEN
+        RAISE_APPLICATION_ERROR(-20001, 'La membresía no está activa o ha expirado.');
+    END IF;
+
+    -- Insertar el registro en Historial_Curso
+    INSERT INTO Historial_Curso (id_membresia, id_curso, horas, fecha)
+    VALUES (p_id_membresia, p_id_curso, p_horas, SYSDATE);
+
+    COMMIT;
+
+    DBMS_OUTPUT.PUT_LINE('Asistencia registrada con éxito.');
+EXCEPTION
+    WHEN OTHERS THEN
+        ROLLBACK;
+        DBMS_OUTPUT.PUT_LINE('Error al registrar la asistencia: ' || SQLERRM);
+END;
+/
+
+
+
+
+
+
+
+
 
 
 --Este procedimiento tomara la cedula y la contrasena proporcionada como parametros y creara el usuario con rol
