@@ -1,0 +1,74 @@
+{
+  "extends": [
+    "eslint:recommended",
+    "plugin:react/recommended",
+    "plugin:react/jsx-runtime",
+    "plugin:react-hooks/recommended",
+    "plugin:import/recommended",
+    "plugin:@typescript-eslint/recommended",
+    "prettier"
+  ],
+  "overrides": [
+    {
+      "files": [
+        "*.js",
+        "*.jsx",
+        "*.ts",
+        "*.tsx"
+      ]
+    }
+  ],
+  "env": {
+    "browser": true,
+    "node": true
+  },
+  "settings": {
+    "react": {
+      "version": "detect"
+    },
+    "import/resolver": {
+      "node": {
+        "paths": [
+          "."
+        ],
+        "extensions": [
+          ".js",
+          ".jsx",
+          ".ts",
+          ".tsx"
+        ]
+      }
+    }
+  },
+  "rules": {
+    "react/jsx-max-props-per-line": [
+      "error",
+      {
+        "maximum": 1
+      }
+    ],
+    "@typescript-eslint/ban-ts-comment": "off",
+    "@typescript-eslint/no-empty-function": [
+      "error",
+      {
+        "allow": [
+          "arrowFunctions"
+        ]
+      }
+    ],
+    "@typescript-eslint/no-explicit-any": "off",
+    "@typescript-eslint/ban-types": "off",
+    "@typescript-eslint/no-non-null-assertion": "off",
+    "import/named": "off",
+    "react/no-unescaped-entities": "off",
+    "react-hooks/exhaustive-deps": "off",
+    "react-hooks/rules-of-hooks": "off",
+    "react/display-name": "off",
+    "react/prop-types": "off",
+    "import/no-named-as-default-member": "off",
+    "import/no-named-as-default": "off",
+    "no-case-declarations": "off",
+    "import/no-unresolved": "off",
+    "@typescript-eslint/no-unused-vars": "off"
+  }
+}
