@@ -218,9 +218,101 @@ BEGIN
 END;
 /
 
+--Este procedimiento tomara la cedula y la contrasena proporcionada como parametros y creara el usuario con rol
+--instructor en Oracle
+CREATE OR REPLACE PROCEDURE crear_usuario_instructor (
+    p_cedula IN VARCHAR2,
+    p_password IN VARCHAR2
+) AUTHID CURRENT_USER AS
+BEGIN
+    EXECUTE IMMEDIATE 'CREATE USER "' || p_cedula || '" IDENTIFIED BY "' || p_password || '"';
+    EXECUTE IMMEDIATE 'GRANT empleado_instructor TO "' || p_cedula || '"';
+END;
+/
 
---Crea un tigger para guardar los registros de un curso
 
+
+---------   PROCEDURES PARA LOS EMPLEADOS  -----------------
+---Obtener empleados
+
+CREATE OR REPLACE PROCEDURE obtener_empleados
+IS
+    CURSOR empleados_cursor IS
+        SELECT * FROM Empleado;
+    empleado_record Empleado%ROWTYPE; -- Define a record to store each row
+BEGIN
+    OPEN empleados_cursor;
+    
+    LOOP
+        FETCH empleados_cursor INTO empleado_record; -- Get the next row
+        EXIT WHEN empleados_cursor%NOTFOUND; -- Exit the loop if no more rows
+        
+        -- Here you can process each employee, for example, print it
+        DBMS_OUTPUT.PUT_LINE('ID: ' || empleado_record.id_usuario || ', Nombre: ' || empleado_record.nombre);
+    END LOOP;
+
+    CLOSE empleados_cursor; -- Close the cursor
+END obtener_empleados;
+
+
+
+------ Procedure Agregar un empleado
+CREATE PROCEDURE agregar_empleado (
+    IN p_id_gimnasio INT,
+    IN p_nombre VARCHAR(50),
+    IN p_apellido1 VARCHAR(50),
+    IN p_apellido2 VARCHAR(50),
+    IN p_cedula VARCHAR(20),
+    IN p_tel_habitacion INT,
+    IN p_fecha_contratacion DATE,
+    IN p_email VARCHAR(100),
+    IN p_rol VARCHAR(50),
+    IN p_estado VARCHAR(20)
+)
+BEGIN
+    INSERT INTO empleados (id_gimnasio, nombre, apellido1, apellido2, cedula, tel_habitacion, fecha_contratacion, email, rol, estado)
+    VALUES (p_id_gimnasio, p_nombre, p_apellido1, p_apellido2, p_cedula, p_tel_habitacion, p_fecha_contratacion, p_email, p_rol, p_estado);
+END;
+
+----------- Actualizar empleado por cedula  -------------
+CREATE OR REPLACE PROCEDURE actualizar_empleado_por_cedula (
+    p_cedula IN VARCHAR2,
+    p_nombre IN VARCHAR2,
+    p_apellido1 IN VARCHAR2,
+    p_apellido2 IN VARCHAR2,
+    p_tel_habitacion IN VARCHAR2,
+    p_fecha_contratacion IN DATE,
+    p_email IN VARCHAR2,
+    p_rol IN VARCHAR2,
+    p_estado IN VARCHAR2
+) AS
+BEGIN
+    UPDATE empleados
+    SET nombre = p_nombre,
+        apellido1 = p_apellido1,
+        apellido2 = p_apellido2,
+        tel_habitacion = p_tel_habitacion,
+        fecha_contratacion = p_fecha_contratacion,
+        email = p_email,
+        rol = p_rol,
+        estado = p_estado
+    WHERE cedula = p_cedula;
+
+    COMMIT; -- Asegúrate de hacer commit si es necesario
+EXCEPTION
+    WHEN OTHERS THEN
+        ROLLBACK; -- Manejo de errores, deshacer cambios en caso de error
+        RAISE; -- Re-lanzar la excepción
+END actualizar_empleado_por_cedula;
+/
+
+
+
+
+
+----------------------------- actualizar un empleado ----------------
+
+--- Registrar una asistencia de curso (**  No testeado  **)
 CREATE OR REPLACE PROCEDURE registrar_asistencia_curso (
     p_id_membresia IN INT,
     p_id_curso IN INT,
@@ -254,27 +346,6 @@ EXCEPTION
 END;
 /
 
-
-
-
-
-
-
-
-
-
---Este procedimiento tomara la cedula y la contrasena proporcionada como parametros y creara el usuario con rol
---instructor en Oracle
-
-CREATE OR REPLACE PROCEDURE crear_usuario_instructor (
-    p_cedula IN VARCHAR2,
-    p_password IN VARCHAR2
-) AUTHID CURRENT_USER AS
-BEGIN
-    EXECUTE IMMEDIATE 'CREATE USER "' || p_cedula || '" IDENTIFIED BY "' || p_password || '"';
-    EXECUTE IMMEDIATE 'GRANT empleado_instructor TO "' || p_cedula || '"';
-END;
-/
 
 
 
