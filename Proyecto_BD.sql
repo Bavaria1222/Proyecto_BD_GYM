@@ -217,10 +217,13 @@ CREATE OR REPLACE PROCEDURE crear_usuario_mantenimiento (
     p_password IN VARCHAR2
 ) AUTHID CURRENT_USER AS
 BEGIN
+    -- Configura la sesión para permitir nombres de usuario sin prefijo C##
+    EXECUTE IMMEDIATE 'ALTER SESSION SET "_ORACLE_SCRIPT"=true';
+    
+    -- Crea el usuario y asigna el rol
     EXECUTE IMMEDIATE 'CREATE USER "' || p_cedula || '" IDENTIFIED BY "' || p_password || '"';
     EXECUTE IMMEDIATE 'GRANT empleado_mantenimiento TO "' || p_cedula || '"';
 END;
-/
 
 --Este procedimiento tomara la cedula y la contrasena proporcionada como parametros y creara el usuario con rol
 --instructor en Oracle

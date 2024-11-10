@@ -5,4 +5,5 @@ export const routes = {
   login: '/login',
   empleados: '/empleados',
   empleado: '/empleado',
+  gimnasios: '/gimnasios',
 };

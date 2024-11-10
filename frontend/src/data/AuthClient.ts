@@ -46,8 +46,10 @@ export class AuthClient extends CandyClient {
     return this.get(`/empleados`);
   }
 
-  async getUser(id: string) {
-    return this.get(`/user/${id}`);
+  //Gimnasio
+
+  async getGimnasios() {
+    return this.get(`/Gimnnasio`);
   }
 
   async patchStatus(id: string) {
@@ -61,6 +63,4 @@ export class AuthClient extends CandyClient {
   async patchUser(id: string, updateUserDTO) {
     return this.patch<void>(`/user/${id}`, updateUserDTO);
   }
-
-
 }

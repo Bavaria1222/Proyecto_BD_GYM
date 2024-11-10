@@ -1,17 +1,24 @@
 import { lazy } from 'react';
 import type { RouteObject } from 'react-router';
+import { Navigate, Outlet } from 'react-router-dom';
 import { Layout } from 'src/layouts';
 import Login from 'src/pages/auth/Login';
+import Empleado from 'src/pages/empleados/empleado';
+import EmpleadosLista from 'src/pages/empleados/empleados';
+import GimnasiosLista from 'src/pages/gimnasio/gimnasios';
 // import { Layout as LayoutBase } from "src/layouts/base";
 import { routes } from './routes';
-import { Navigate, Outlet } from 'react-router-dom';
-import EmpleadosLista from 'src/pages/empleados/empleados';
-import Empleado from 'src/pages/empleados/empleado';
 
 function ProtectedRoute({ children }) {
-  const userData = JSON.parse(localStorage.getItem("userData"));
-  return userData ? children : <Navigate to="/login"
-    replace />;
+  const userData = JSON.parse(localStorage.getItem('userData'));
+  return userData ? (
+    children
+  ) : (
+    <Navigate
+      to="/login"
+      replace
+    />
+  );
 }
 
 const HomePage = lazy(() => import('src/pages/index'));
@@ -19,7 +26,8 @@ const PageExample = lazy(() => import('src/pages/page-example'));
 const Error404Page = lazy(() => import('src/pages/404'));
 const normalizeRoute = (route: string) => {
   return route.slice(1);
-}; export const routesOutlets: RouteObject[] = [
+};
+export const routesOutlets: RouteObject[] = [
   {
     path: '/',
     element: (
@@ -33,7 +41,7 @@ const normalizeRoute = (route: string) => {
       { path: 'empleados', element: <EmpleadosLista /> },
       { path: 'empleado', element: <Empleado /> },
       { path: 'empleado/:id', element: <Empleado /> },
-
+      { path: 'gimnasios', element: <GimnasiosLista /> },
     ],
   },
   { path: 'login', element: <Login /> },
