@@ -17,7 +17,7 @@ import java.util.Map;
 @Repository
 public class ClienteRepository   {
 
-    
+
 
     private final JdbcTemplate jdbcTemplate;
 
@@ -56,4 +56,37 @@ public class ClienteRepository   {
         });
 
     }
+    public Cliente obtenerDatosEmpleadoPorCedula(String cedula) {
+        String sql = "{call obtener_datos_empleado(?, ?, ?, ?, ?)}"; // Llamada al procedimiento con el nombre correcto
+
+        return jdbcTemplate.execute((Connection connection) -> {
+            CallableStatement callableStatement = connection.prepareCall(sql);
+            callableStatement.setString(1, cedula); // Parámetro de entrada p_cedula
+            callableStatement.registerOutParameter(2, Types.VARCHAR); // Parámetro de salida p_nombre
+            callableStatement.registerOutParameter(3, Types.VARCHAR); // Parámetro de salida p_apellido1
+            callableStatement.registerOutParameter(4, Types.VARCHAR); // Parámetro de salida p_apellido2
+            callableStatement.registerOutParameter(5, Types.VARCHAR); // Parámetro de salida p_cedula_out
+            return callableStatement;
+        }, (CallableStatement callableStatement) -> {
+            callableStatement.execute(); // Ejecuta el procedimiento
+
+            // Recupera los valores de salida después de la ejecución
+            String nombre = callableStatement.getString(2);
+            String apellido1 = callableStatement.getString(3);
+            String apellido2 = callableStatement.getString(4);
+            String cedulaOut = callableStatement.getString(5);
+
+            // Crea el objeto Cliente y establece los valores obtenidos
+            Cliente cliente = new Cliente();
+            cliente.setNombre(nombre);
+            cliente.setApellido1(apellido1);
+            cliente.setApellido2(apellido2);
+            cliente.setCedula(cedulaOut);
+
+            return cliente; // Devuelve el objeto Cliente con los datos obtenidos
+        });
+    }
+
+
+
 }

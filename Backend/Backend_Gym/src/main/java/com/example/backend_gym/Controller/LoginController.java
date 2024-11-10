@@ -41,9 +41,16 @@ public class LoginController {
             DynamicUserContextHolder.setCurrentUser(username);
             request.getSession().setAttribute("username", username);
 
-            // Obtener datos del cliente y rol del usuario
-            Cliente cliente = clienteRepository.obtenerDatosClientePorCedula(username);
+            // Obtener el rol del usuario
             String rol = usuarioService.obtenerPrimerRolGrantee(username);
+
+            // Obtener los datos del cliente o empleado según el rol
+            Cliente cliente;
+            if (rol.toLowerCase().contains("empleado")) {
+                cliente = clienteRepository.obtenerDatosEmpleadoPorCedula(username);
+            } else {
+                cliente = clienteRepository.obtenerDatosClientePorCedula(username);
+            }
 
             // Verificar el usuario conectado a Oracle
             String usuarioConectadoOracle = usuarioOracleService.obtenerUsuarioConectado(username, password);
@@ -63,4 +70,5 @@ public class LoginController {
             return ResponseEntity.badRequest().body(null);
         }
     }
+
 }

@@ -106,7 +106,7 @@ public class EmpleadoRepository {
     }
 
     public void crearEmpleadoMantenimiento(String cedula, String password) {
-        jdbcTemplate.execute("ALTER SESSION SET \"_ORACLE_SCRIPT\"=true");
+
         String procedureCall = "{call crear_usuario_mantenimiento(?, ?)}";
         jdbcTemplate.update(connection -> {
             var callableStatement = connection.prepareCall(procedureCall);
@@ -117,7 +117,6 @@ public class EmpleadoRepository {
     }
 
     public void crearEmpleadoInstructor(String cedula, String password) {
-        jdbcTemplate.execute("ALTER SESSION SET \"_ORACLE_SCRIPT\"=true");
         String procedureCall = "{call crear_usuario_instructor(?, ?)}";
         jdbcTemplate.update(connection -> {
             var callableStatement = connection.prepareCall(procedureCall);
