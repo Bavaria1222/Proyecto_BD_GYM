@@ -41,26 +41,26 @@ export class AuthClient extends CandyClient {
     return this.post(`/login`, authCredentialsDto);
   }
 
-  //user
-  /*  async getUsers() {
-      return this.get<UserDTO[]>(`/user`);
-    }
-  
-    async getUser(id: string) {
-      return this.get(`/user/${id}`);
-    }
-  
-    async patchStatus(id: string) {
-      return this.patch<void>(`/user/status/${id}`);
-    }
-  
-    async invite(inviteUserDTO: InviteUserDTO) {
-      return this.post<void>(`/user/invite`, inviteUserDTO);
-    }
-  
-    async patchUser(id: string, updateUserDTO: UpdateUserDTO) {
-      return this.patch<void>(`/user/${id}`, updateUserDTO);
-    }
-  
-  */
+  //Empleados
+  async getEmpleados() {
+    return this.get(`/empleados`);
+  }
+
+  async getUser(id: string) {
+    return this.get(`/user/${id}`);
+  }
+
+  async patchStatus(id: string) {
+    return this.patch<void>(`/user/status/${id}`);
+  }
+
+  async invite(inviteUserDTO) {
+    return this.post<void>(`/user/invite`, inviteUserDTO);
+  }
+
+  async patchUser(id: string, updateUserDTO) {
+    return this.patch<void>(`/user/${id}`, updateUserDTO);
+  }
+
+
 }

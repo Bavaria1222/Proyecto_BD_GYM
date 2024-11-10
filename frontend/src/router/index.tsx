@@ -5,6 +5,8 @@ import Login from 'src/pages/auth/Login';
 // import { Layout as LayoutBase } from "src/layouts/base";
 import { routes } from './routes';
 import { Navigate, Outlet } from 'react-router-dom';
+import EmpleadosLista from 'src/pages/empleados/empleados';
+import Empleado from 'src/pages/empleados/empleado';
 
 function ProtectedRoute({ children }) {
   const userData = JSON.parse(localStorage.getItem("userData"));
@@ -21,15 +23,17 @@ const normalizeRoute = (route: string) => {
   {
     path: '/',
     element: (
-      <ProtectedRoute>
-        <Layout>
-          <Outlet />
-        </Layout>
-      </ProtectedRoute>
+      <Layout>
+        <Outlet />
+      </Layout>
     ),
     children: [
       { index: true, element: <HomePage /> },
       { path: 'page-example', element: <PageExample /> },
+      { path: 'empleados', element: <EmpleadosLista /> },
+      { path: 'empleado', element: <Empleado /> },
+      { path: 'empleado/:id', element: <Empleado /> },
+
     ],
   },
   { path: 'login', element: <Login /> },

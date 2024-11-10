@@ -47,7 +47,8 @@ const GenericModal: FC<GenericModalProps> = ({
                         <Button
                             onClick={onConfirm}
                             sx={{
-
+                                backgroundColor: '#36799C',
+                                '&:hover': { backgroundColor: '#2C627E' },
                                 color: 'white',
                                 width: '100%',
                                 fontSize: '0.875rem',
@@ -75,7 +76,8 @@ const GenericModal: FC<GenericModalProps> = ({
                     <Button
                         onClick={onConfirm}
                         sx={{
-
+                            backgroundColor: '#36799C',
+                            '&:hover': { backgroundColor: '#2C627E' },
                             color: 'white',
                             width: '30%',
                             fontSize: '0.875rem',
@@ -90,7 +92,8 @@ const GenericModal: FC<GenericModalProps> = ({
                     <Button
                         onClick={onClose}
                         sx={{
-
+                            backgroundColor: '#36799C',
+                            '&:hover': { backgroundColor: '#2C627E' },
                             color: 'white',
                             width: '30%',
                             fontSize: '0.875rem',

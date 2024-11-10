@@ -129,16 +129,7 @@ const CandyPage: FC<CandyPageProps> = ({
                         </Grid>
                     </Grid>
                 </Container>
-                <Box
-                    py={1}
-                    textAlign="center"
-                    sx={{ backgroundColor: '#E9E9E9' }}
-                >
-                    <Typography variant="body2"
-                        color="textSecondary">
-                        INAMU Costa Rica Copyright - Todos los derechos reservados
-                    </Typography>
-                </Box>
+
             </Box>
         </>
     );

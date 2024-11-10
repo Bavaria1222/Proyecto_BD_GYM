@@ -50,7 +50,7 @@ export const useMenuItems = (): MenuItem[] => {
                 <UserIcon />
               </Box>
             ),
-            route: routes.dummy,
+            route: routes.empleados,
           },
           {
             title: 'Membresías',
