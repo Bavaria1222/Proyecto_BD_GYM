@@ -138,7 +138,7 @@ CREATE TABLE Historial_Curso (
 
 CREATE TABLE Maquina (
     id_maquina INT GENERATED ALWAYS AS IDENTITY,  -- ID único de la máquina
-    nombre VARCHAR(20),
+    nombre VARCHAR(30),
     descripcion VARCHAR(50) NOT NULL,  
     estado VARCHAR(30) DEFAULT 'operativa',  
     CONSTRAINT pk_maquina PRIMARY KEY (id_maquina),  
@@ -209,6 +209,29 @@ GRANT CREATE SESSION to cliente;
 
 -------- Procedures para USUARIOS  ------
 
+------ Procedure para crear un cliente en oracle y asignar el rol de cliente
+
+
+CREATE OR REPLACE PROCEDURE crear_cliente (
+    p_cedula IN VARCHAR2,
+    p_password IN VARCHAR2
+) AUTHID CURRENT_USER AS
+BEGIN
+    -- Configura la sesión para permitir nombres de usuario sin prefijo C##
+    EXECUTE IMMEDIATE 'ALTER SESSION SET "_ORACLE_SCRIPT"=true';
+    
+    -- Crea el usuario y asigna el rol
+    EXECUTE IMMEDIATE 'CREATE USER "' || p_cedula || '" IDENTIFIED BY "' || p_password || '"';
+    EXECUTE IMMEDIATE 'GRANT cliente TO "' || p_cedula || '"';
+END crear_cliente;
+/
+
+
+
+
+
+
+
 --Este procedimiento tomara la cedula y la contrasena proporcionada como parametros y creara el usuario con rol
 --mantenimiento en Oracle
 
@@ -234,7 +257,7 @@ CREATE OR REPLACE PROCEDURE crear_usuario_instructor (
 BEGIN
     -- Configura la sesión para permitir nombres de usuario sin prefijo C##
     EXECUTE IMMEDIATE 'ALTER SESSION SET "_ORACLE_SCRIPT"=true';
-    
+
     EXECUTE IMMEDIATE 'CREATE USER "' || p_cedula || '" IDENTIFIED BY "' || p_password || '"';
     EXECUTE IMMEDIATE 'GRANT empleado_instructor TO "' || p_cedula || '"';
 END;
@@ -407,6 +430,40 @@ EXCEPTION
 END;
 /
 
+------ OBTENER LOS DATOS DE UN EMPLEADO
+
+CREATE OR REPLACE PROCEDURE obtener_datos_empleado (
+    p_cedula IN VARCHAR2,
+    p_nombre OUT VARCHAR2,
+    p_apellido1 OUT VARCHAR2,
+    p_apellido2 OUT VARCHAR2, -- Nuevo parámetro de salida para apellido2
+    p_cedula_out OUT VARCHAR2
+) IS
+BEGIN
+    -- Consulta para obtener los datos del cliente por cédula
+    SELECT nombre, apellido1, apellido2, cedula -- Agregado apellido2
+    INTO p_nombre, p_apellido1, p_apellido2, p_cedula_out
+    FROM EMPLEADO
+    WHERE cedula = p_cedula;
+
+EXCEPTION
+    WHEN NO_DATA_FOUND THEN
+        p_nombre := NULL;
+        p_apellido1 := NULL;
+        p_apellido2 := NULL; -- Inicializa apellido2 en caso de no encontrar datos
+        p_cedula_out := NULL;
+        DBMS_OUTPUT.PUT_LINE('No se encontró el cliente con la cédula ' || p_cedula);
+    WHEN OTHERS THEN
+        DBMS_OUTPUT.PUT_LINE('Ocurrió un error: ' || SQLERRM);
+END obtener_datos_cliente;
+/
+
+
+
+
+
+
+
 
 --Procedure para CLIENTES
 
@@ -531,18 +588,187 @@ AUDIT DROP ANY TABLE BY ACCESS;
 INSERT INTO Gimnasio (nombre, direccion, email, horario, tel_habitacion, celular)
 VALUES ('Gimnasio Central', 'Av. Principal 123', 'contacto@gymcentral.com', '6am - 10pm', 22223333, 88889999);
 
----EMPLEADO INSTRUCTOR
+----Agregar empleados
+
+
+
+-- Insertar 4 empleados con rol "instructor"
+INSERT INTO Empleado (id_gimnasio, nombre, apellido1, apellido2, cedula, tel_habitacion, fecha_contratacion, email, rol, estado)
+VALUES (1, 'Ricardo', 'Santos', 'Vargas', '1111111', 22551122, TO_DATE('2023-01-15', 'YYYY-MM-DD'), 'ricardo.santos@example.com', 'instructor', 'activo');
 
 INSERT INTO Empleado (id_gimnasio, nombre, apellido1, apellido2, cedula, tel_habitacion, fecha_contratacion, email, rol, estado)
-VALUES (1, 'Carlos', 'Martinez', 'Lopez', '87654322', 1234567, TO_DATE('2024-10-25', 'YYYY-MM-DD'), 'carlos.martinez@example.com', 'Instructor', 'activo');
-
---EMPLEADO MANTENIMIENTO 
+VALUES (1, 'Lorena', 'Méndez', 'Quirós', '2222222', 22552233, TO_DATE('2022-05-20', 'YYYY-MM-DD'), 'lorena.mendez@example.com', 'instructor', 'activo');
 
 INSERT INTO Empleado (id_gimnasio, nombre, apellido1, apellido2, cedula, tel_habitacion, fecha_contratacion, email, rol, estado)
-VALUES (1, 'Juan', 'Perez', 'Gomez', '87654321', 1234567, TO_DATE('2024-10-25', 'YYYY-MM-DD'), 'juan.perez@example.com', 'Mantenimiento', 'activo');
+VALUES (1, 'Esteban', 'Solano', 'García', '3333333', 22553344, TO_DATE('2021-03-10', 'YYYY-MM-DD'), 'esteban.solano@example.com', 'instructor', 'activo');
+
+INSERT INTO Empleado (id_gimnasio, nombre, apellido1, apellido2, cedula, tel_habitacion, fecha_contratacion, email, rol, estado)
+VALUES (1, 'Gabriela', 'Camacho', 'Rojas', '4444444', 22554455, TO_DATE('2020-08-30', 'YYYY-MM-DD'), 'gabriela.camacho@example.com', 'instructor', 'activo');
+
+-- Insertar 2 empleados con rol "mantenimiento"
+INSERT INTO Empleado (id_gimnasio, nombre, apellido1, apellido2, cedula, tel_habitacion, fecha_contratacion, email, rol, estado)
+VALUES (1, 'Mario', 'Hernández', 'Campos', '5555555', 22555566, TO_DATE('2019-11-05', 'YYYY-MM-DD'), 'mario.hernandez@example.com', 'mantenimiento', 'activo');
+
+INSERT INTO Empleado (id_gimnasio, nombre, apellido1, apellido2, cedula, tel_habitacion, fecha_contratacion, email, rol, estado)
+VALUES (1, 'Patricia', 'Rojas', 'Ureña', '6666666', 22556677, TO_DATE('2018-02-18', 'YYYY-MM-DD'), 'patricia.rojas@example.com', 'mantenimiento', 'activo');
+
+BEGIN
+    crear_usuario_instructor('1111111', 'system');
+    crear_usuario_instructor('2222222', 'system');
+    crear_usuario_instructor('3333333', 'system');
+    crear_usuario_instructor('4444444', 'system');
+END;
+/
+BEGIN
+    crear_usuario_mantenimiento('5555555', 'system');
+    crear_usuario_mantenimiento('6666666', 'system');
+END;
+/
+
+----Clientes genericos
+
+-- Inserciones de clientes genéricos
+INSERT INTO Cliente (id_gimnasio, nombre, apellido1, apellido2, cedula, email, estado, tel_habitacion, celular)
+VALUES (1, 'Carlos', 'Ramírez', 'López', '1010101', 'carlos.ramirez@example.com', 'activo', 22221111, 89991111);
+
+INSERT INTO Cliente (id_gimnasio, nombre, apellido1, apellido2, cedula, email, estado, tel_habitacion, celular)
+VALUES (1, 'María', 'Fernández', 'Gómez', '2020202', 'maria.fernandez@example.com', 'activo', 22221212, 89992222);
+
+INSERT INTO Cliente (id_gimnasio, nombre, apellido1, apellido2, cedula, email, estado, tel_habitacion, celular)
+VALUES (1, 'Juan', 'Pérez', 'Martínez', '3030303', 'juan.perez@example.com', 'inactivo', 22221313, 89993333);
+
+INSERT INTO Cliente (id_gimnasio, nombre, apellido1, apellido2, cedula, email, estado, tel_habitacion, celular)
+VALUES (1, 'Ana', 'Rodríguez', 'Soto', '4040404', 'ana.rodriguez@example.com', 'activo', 22221414, 89994444);
+
+INSERT INTO Cliente (id_gimnasio, nombre, apellido1, apellido2, cedula, email, estado, tel_habitacion, celular)
+VALUES (1, 'Luis', 'González', 'Hernández', '5050505', 'luis.gonzalez@example.com', 'activo', 22221515, 89995555);
+
+----- asignar roles a los clientes
+
+BEGIN
+    crear_cliente('1010101', 'system');
+    crear_cliente('2020202', 'system');
+    crear_cliente('3030303', 'system');
+    crear_cliente('5050505', 'system');
+    crear_cliente('4040404', 'system');
+    crear_cliente('87654323', 'system');
+END;
+/
+
+--- Generar membresia
+
+
+
+INSERT INTO Membresia (id_cliente, tipo_membresia, fecha_inicio, fecha_fin, estado, monto)
+VALUES (41, 'Premium', TO_DATE('10/11/2024', 'DD/MM/YYYY'), TO_DATE('10/11/2025', 'DD/MM/YYYY'), 'activo', 500.00);
+
+INSERT INTO Membresia (id_cliente, tipo_membresia, fecha_inicio, fecha_fin, estado, monto)
+VALUES (42, 'Premium', TO_DATE('10/11/2024', 'DD/MM/YYYY'), TO_DATE('10/11/2025', 'DD/MM/YYYY'), 'activo', 500.00);
+
+INSERT INTO Membresia (id_cliente, tipo_membresia, fecha_inicio, fecha_fin, estado, monto)
+VALUES (43, 'Premium', TO_DATE('10/11/2024', 'DD/MM/YYYY'), TO_DATE('10/11/2025', 'DD/MM/YYYY'), 'inactivo', 500.00);
+
+INSERT INTO Membresia (id_cliente, tipo_membresia, fecha_inicio, fecha_fin, estado, monto)
+VALUES (45, 'Premium', TO_DATE('10/11/2024', 'DD/MM/YYYY'), TO_DATE('10/11/2025', 'DD/MM/YYYY'), 'activo', 500.00);
+
+INSERT INTO Membresia (id_cliente, tipo_membresia, fecha_inicio, fecha_fin, estado, monto)
+VALUES (46, 'Premium', TO_DATE('10/11/2024', 'DD/MM/YYYY'), TO_DATE('10/11/2025', 'DD/MM/YYYY'), 'activo', 500.00);
+
+INSERT INTO Membresia (id_cliente, tipo_membresia, fecha_inicio, fecha_fin, estado, monto)
+VALUES (21, 'Premium', TO_DATE('31/10/2024', 'DD/MM/YYYY'), TO_DATE('31/10/2025', 'DD/MM/YYYY'), 'activo', 500.00);
+
+
+
+---
+---cursos
+
+
+INSERT INTO Curso (id_instructor, descripcion, horario, disponibilidad)
+VALUES (95, 'Yoga Básico', 'Lunes y Miércoles 8:00-9:00 AM', 'Disponible');
+
+INSERT INTO Curso (id_instructor, descripcion, horario, disponibilidad)
+VALUES (96, 'Pilates Intermedio', 'Martes y Jueves 10:00-11:00 AM', 'Disponible');
+
+INSERT INTO Curso (id_instructor, descripcion, horario, disponibilidad)
+VALUES (97, 'HIIT Avanzado', 'Lunes, Miércoles y Viernes 6:00-7:00 AM', 'Disponible');
+
+INSERT INTO Curso (id_instructor, descripcion, horario, disponibilidad)
+VALUES (98, 'Cardio Box', 'Martes y Jueves 5:00-6:00 PM', 'Disponible');
+
+INSERT INTO Curso (id_instructor, descripcion, horario, disponibilidad)
+VALUES (94, 'Crossfit', 'Sábados 9:00-11:00 AM', 'Disponible');
+
+INSERT INTO Curso (id_instructor, descripcion, horario, disponibilidad)
+VALUES (95, 'Zumba', 'Viernes 6:00-7:00 PM', 'Disponible');
+
+
+
+---cambiar varchar a 30
+ALTER TABLE Maquina
+MODIFY (nombre VARCHAR(30));
+INSERT INTO Maquina (nombre, descripcion, estado)
+VALUES ('Cinta de correr', 'Ejercicio de carrera', 'operativa');
+
+INSERT INTO Maquina (nombre, descripcion, estado)
+VALUES ('Elíptica', 'Ejercicio de bajo impacto', 'operativa');
+
+INSERT INTO Maquina (nombre, descripcion, estado)
+VALUES ('Remo', 'Fortalecimiento completo', 'en mantenimiento');
+
+INSERT INTO Maquina (nombre, descripcion, estado)
+VALUES ('Bicicleta estática', 'Entrenamiento de resistencia', 'operativa');
+
+INSERT INTO Maquina (nombre, descripcion, estado)
+VALUES ('Banco de pesas', 'Ejercicios con pesas libres', 'operativa');
+
+INSERT INTO Maquina (nombre, descripcion, estado)
+VALUES ('Press de pecho', 'Trabajo de pectorales', 'en mantenimiento');
+
+INSERT INTO Maquina (nombre, descripcion, estado)
+VALUES ('Pectoral Contractor', 'Ejercicio de pectorales', 'inactiva');
+
+INSERT INTO Maquina (nombre, descripcion, estado)
+VALUES ('Prensa de piernas', 'Ejercicio de piernas', 'operativa');
+
+INSERT INTO Maquina (nombre, descripcion, estado)
+VALUES ('Polea alta', 'Trabajo de dorsales y tríceps', 'operativa');
+
+INSERT INTO Maquina (nombre, descripcion, estado)
+VALUES ('Máquina de abdominales', 'Fortalecimiento abdominal', 'en mantenimiento');
 
 
 
 
 
 
+
+-- Rutina para el cliente Carlos Ramírez (id_cliente = 41) asignada al instructor Ricardo Santos (id_empleado = 95)
+INSERT INTO Rutina (id_cliente, id_empleado, id_maquina, horas) VALUES (41, 95, 1, 1);
+INSERT INTO Rutina (id_cliente, id_empleado, id_maquina, horas) VALUES (41, 95, 4, 1);
+INSERT INTO Rutina (id_cliente, id_empleado, id_maquina, horas) VALUES (41, 95, 8, 1);
+INSERT INTO Rutina (id_cliente, id_empleado, id_maquina, horas) VALUES (41, 95, 11, 1);
+INSERT INTO Rutina (id_cliente, id_empleado, id_maquina, horas) VALUES (41, 95, 12, 1);
+
+-- Rutina para la cliente María Fernández (id_cliente = 42) asignada al instructor Lorena Méndez (id_empleado = 96)
+INSERT INTO Rutina (id_cliente, id_empleado, id_maquina, horas) VALUES (42, 96, 5, 1);
+INSERT INTO Rutina (id_cliente, id_empleado, id_maquina, horas) VALUES (42, 96, 14, 1);
+INSERT INTO Rutina (id_cliente, id_empleado, id_maquina, horas) VALUES (42, 96, 15, 1);
+INSERT INTO Rutina (id_cliente, id_empleado, id_maquina, horas) VALUES (42, 96, 18, 1);
+INSERT INTO Rutina (id_cliente, id_empleado, id_maquina, horas) VALUES (42, 96, 21, 1);
+
+-- Rutina para la cliente Ana Rodríguez (id_cliente = 46) asignada al instructor Esteban Solano (id_empleado = 97)
+INSERT INTO Rutina (id_cliente, id_empleado, id_maquina, horas) VALUES (46, 97, 22, 1);
+INSERT INTO Rutina (id_cliente, id_empleado, id_maquina, horas) VALUES (46, 97, 24, 1);
+INSERT INTO Rutina (id_cliente, id_empleado, id_maquina, horas) VALUES (46, 97, 25, 1);
+INSERT INTO Rutina (id_cliente, id_empleado, id_maquina, horas) VALUES (46, 97, 28, 1);
+INSERT INTO Rutina (id_cliente, id_empleado, id_maquina, horas) VALUES (46, 97, 29, 1);
+
+
+
+
+-- Inserciones para la tabla Historial_Curso
+INSERT INTO Historial_Curso (id_membresia, id_curso, horas) VALUES (21, 21, 2); -- Cliente 41 en "Yoga Básico"
+INSERT INTO Historial_Curso (id_membresia, id_curso, horas) VALUES (22, 24, 1); -- Cliente 42 en "Cardio Box"
+INSERT INTO Historial_Curso (id_membresia, id_curso, horas) VALUES (24, 25, 3); -- Cliente 45 en "Crossfit"
+INSERT INTO Historial_Curso (id_membresia, id_curso, horas) VALUES (25, 26, 1); -- Cliente 46 en "Zumba"
+INSERT INTO Historial_Curso (id_membresia, id_curso, horas) VALUES (26, 30, 2); -- Cliente 21 en "Cardio Box"
