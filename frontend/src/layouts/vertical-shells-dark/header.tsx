@@ -26,6 +26,7 @@ import { useDialog } from 'src/hooks/use-dialog';
 import { usePopover } from 'src/hooks/use-popover';
 import useScrollDirection from 'src/hooks/use-scroll-direction';
 import { HEADER_HEIGHT, SIDEBAR_WIDTH, SIDEBAR_WIDTH_COLLAPSED } from 'src/theme/utils';
+import { useNavigate } from 'react-router-dom';
 
 const HeaderWrapper = styled(AppBar)(({ theme }) => ({
   height: HEADER_HEIGHT,
@@ -52,14 +53,18 @@ export const Header: FC<HeaderProps> = (props) => {
   const dialog = useDialog();
   const popover = usePopover<HTMLButtonElement>();
   const theme = useTheme();
+  const navigate = useNavigate();
+
   const notifications = useDialog();
   const widgets = useDialog();
   const popoverChat = usePopover<HTMLButtonElement>();
+  // Extraer datos del usuario desde localStorage
+  const userData = JSON.parse(localStorage.getItem('userData') || '{}');
+  const fullName = `${userData.nombre} ${userData.apellido1}`;
 
-  const user = {
-    avatar: '/avatars/3.png',
-    name: 'Ethan Donovan',
-    jobtitle: 'Principal Engineer',
+  const handleLogout = () => {
+    localStorage.removeItem('userData');
+    navigate('/login');
   };
 
   return (
@@ -132,17 +137,21 @@ export const Header: FC<HeaderProps> = (props) => {
                   fontSize: { xs: '1rem', sm: '1.25rem' },
                   fontWeight: 'bold',
                 }}
+
               >
-                Carlos Alvares
+                {fullName}
 
               </Box>
               <Button
                 variant="text"
+                onClick={handleLogout}
+
                 sx={{
                   lineHeight: 1.2,
                   padding: 0,
                   fontSize: { xs: '14px', sm: '18px' },
                   textDecoration: 'underline',
+
                 }}
 
               >

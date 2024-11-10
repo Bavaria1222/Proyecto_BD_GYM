@@ -52,7 +52,6 @@ export function LoginForm(): React.JSX.Element {
   });
 
   const onSubmit = async (values: Values): Promise<void> => {
-    console.log('Datos a enviar:', values);
     setIsPending(true);
     try {
       await Login(values.username, values.password);
