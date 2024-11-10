@@ -2,13 +2,12 @@ import { CandyClient, CandyClientOptions } from '@cabysis/candy-client';
 import { getToken, isDevelopment } from 'src/utils/constants';
 
 const authOptions: CandyClientOptions = {
-  baseUrl: isDevelopment() ? 'http://localhost:8080/api' : import.meta.env.VITE_API_BASE_URL,
+  baseUrl: isDevelopment() ? 'http://localhost:8080/api' : 'http://localhost:8080/api',
   headers: {
     Accept: 'application/json',
     'Content-Type': 'application/json',
     'Access-Control-Allow-Origin': '*',
   },
-  getToken: getToken,
   credentials: false,
 };
 
@@ -33,14 +32,13 @@ export class AuthClient extends CandyClient {
   }
 
   async delete<T>(url: string): Promise<T> {
-    super.setHeader('X-Client-URL', window.location.href)
+    super.setHeader('X-Client-URL', window.location.href);
     return super.delete<T>(url);
   }
 
-
   //auth
   async login(authCredentialsDto) {
-    return this.post(`/auth/login`, authCredentialsDto);
+    return this.post(`/login`, authCredentialsDto);
   }
 
   //user
@@ -65,5 +63,4 @@ export class AuthClient extends CandyClient {
     }
   
   */
-
 }

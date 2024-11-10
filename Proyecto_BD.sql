@@ -206,8 +206,12 @@ GRANT CREATE SESSION to cliente;
 
 ----------------------------------PROCEDURES --------------------------------------------
 
+
+-------- Procedures para USUARIOS  ------
+
 --Este procedimiento tomara la cedula y la contrasena proporcionada como parametros y creara el usuario con rol
 --mantenimiento en Oracle
+
 CREATE OR REPLACE PROCEDURE crear_usuario_mantenimiento (
     p_cedula IN VARCHAR2,
     p_password IN VARCHAR2
@@ -230,6 +234,59 @@ BEGIN
 END;
 /
 
+---- PROCEDURE VERIFICACION DE USUARIOS
+
+CREATE OR REPLACE PROCEDURE verificar_usuario (
+    p_username IN VARCHAR2,
+    p_existe OUT NUMBER
+) AS
+    v_count NUMBER;
+BEGIN
+    -- Verifica si el usuario existe en la vista ALL_USERS
+    SELECT COUNT(*)
+    INTO v_count
+    FROM all_users
+    WHERE username = UPPER(p_username);
+
+    -- Asigna 1 si el usuario existe, de lo contrario asigna 0
+    p_existe := CASE WHEN v_count > 0 THEN 1 ELSE 0 END;
+END verificar_usuario;
+/
+
+---Obtener el rol de un usuario
+CREATE OR REPLACE PROCEDURE obtener_roles_grantee (
+    p_grantee IN VARCHAR2,
+    p_role OUT VARCHAR2
+) AUTHID CURRENT_USER IS
+    v_sql     VARCHAR2(1000);
+    v_cursor  SYS_REFCURSOR;
+BEGIN
+  
+    p_role := NULL;
+
+ 
+    v_sql := 'SELECT granted_role FROM dba_role_privs WHERE grantee = :grantee';
+
+
+    OPEN v_cursor FOR v_sql USING p_grantee;
+
+   
+    FETCH v_cursor INTO p_role;
+
+
+    CLOSE v_cursor;
+
+    -- Si no se encontró ningún rol, p_role permanecerá como NULL
+
+EXCEPTION
+    WHEN OTHERS THEN
+        p_role := 'Error: ' || SQLERRM; -- Captura el error
+        IF v_cursor%ISOPEN THEN
+            CLOSE v_cursor; 
+        END IF;
+END obtener_roles_grantee;
+
+/
 
 
 ---------   PROCEDURES PARA LOS EMPLEADOS  -----------------
@@ -298,15 +355,13 @@ BEGIN
         estado = p_estado
     WHERE cedula = p_cedula;
 
-    COMMIT; -- Asegúrate de hacer commit si es necesario
+    COMMIT; 
 EXCEPTION
     WHEN OTHERS THEN
         ROLLBACK; -- Manejo de errores, deshacer cambios en caso de error
         RAISE; -- Re-lanzar la excepción
 END actualizar_empleado_por_cedula;
 /
-
-
 
 
 
@@ -347,7 +402,35 @@ END;
 /
 
 
+--Procedure para CLIENTES
 
+
+----Obtener los datos de un cliente
+CREATE OR REPLACE PROCEDURE obtener_datos_cliente (
+    p_cedula IN VARCHAR2,
+    p_nombre OUT VARCHAR2,
+    p_apellido1 OUT VARCHAR2,
+    p_apellido2 OUT VARCHAR2, -- Nuevo parámetro de salida para apellido2
+    p_cedula_out OUT VARCHAR2
+) IS
+BEGIN
+    -- Consulta para obtener los datos del cliente por cédula
+    SELECT nombre, apellido1, apellido2, cedula -- Agregado apellido2
+    INTO p_nombre, p_apellido1, p_apellido2, p_cedula_out
+    FROM Cliente
+    WHERE cedula = p_cedula;
+
+EXCEPTION
+    WHEN NO_DATA_FOUND THEN
+        p_nombre := NULL;
+        p_apellido1 := NULL;
+        p_apellido2 := NULL; -- Inicializa apellido2 en caso de no encontrar datos
+        p_cedula_out := NULL;
+        DBMS_OUTPUT.PUT_LINE('No se encontró el cliente con la cédula ' || p_cedula);
+    WHEN OTHERS THEN
+        DBMS_OUTPUT.PUT_LINE('Ocurrió un error: ' || SQLERRM);
+END obtener_datos_cliente;
+/
 
 
 
