@@ -1,17 +1,16 @@
 package com.example.backend_gym.Controller;
 
 
+import com.example.backend_gym.DTO.EmpleadoDto.AgregarEmpleadoDTO;
 import com.example.backend_gym.Entity.Empleado;
 import com.example.backend_gym.Exception.EmpleadoNotFoundException;
 import com.example.backend_gym.Repository.EmpleadoRepository;
 import com.example.backend_gym.Service.EmpleadoService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -23,18 +22,20 @@ public class EmpleadoController {
     @Autowired
     private EmpleadoService empleadoService;
 
-    @PostMapping("/agregar")
-    public void agregarEmpleado(@RequestParam int idGimnasio,
-                                @RequestParam String nombre,
-                                @RequestParam String apellido1,
-                                @RequestParam String apellido2,
-                                @RequestParam String cedula,
-                                @RequestParam int telHabitacion,
-                                @RequestParam @DateTimeFormat(pattern = "dd-MM-yyyy") Date fechaContratacion,
-                                @RequestParam String email,
-                                @RequestParam String rol,
-                                @RequestParam String estado) {
-        empleadoService.agregarEmpleado(idGimnasio, nombre, apellido1, apellido2, cedula, telHabitacion, fechaContratacion, email, rol, estado);
+    @PostMapping("/agregarEmpleado")
+    public ResponseEntity<String> agregarEmpleado(@RequestBody AgregarEmpleadoDTO empleadoDTO) {
+        // Validar el campo "estado"
+        String rol = empleadoDTO.getRol();
+        if (!"mantenimiento".equalsIgnoreCase(rol) && !"instructor".equalsIgnoreCase(rol)) {
+            return ResponseEntity.badRequest().body("Error: El rol debe ser 'mantenimiento' o 'instructor'.");
+        }
+
+        try {
+            empleadoService.agregarEmpleado(empleadoDTO);
+            return ResponseEntity.ok("Empleado agregado exitosamente.");
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("Error al agregar el empleado: " + e.getMessage());
+        }
     }
 
     @GetMapping("/empleados")
@@ -60,6 +61,16 @@ public class EmpleadoController {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("Error al actualizar el empleado: " + e.getMessage());
+        }
+    }
+
+    @PostMapping("/crear/mantenimiento")
+    public ResponseEntity<String> crearEmpleadoMantenimiento(@RequestParam String cedula, @RequestParam String password) {
+        try {
+            empleadoRepository.crearEmpleadoMantenimiento(cedula, password);
+            return ResponseEntity.ok("Usuario de mantenimiento creado exitosamente.");
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("Error al crear el usuario: " + e.getMessage());
         }
     }
 }

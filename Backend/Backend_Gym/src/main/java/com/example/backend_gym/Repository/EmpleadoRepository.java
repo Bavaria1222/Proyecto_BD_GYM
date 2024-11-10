@@ -1,8 +1,8 @@
 package com.example.backend_gym.Repository;
 
+import com.example.backend_gym.DTO.EmpleadoDto.AgregarEmpleadoDTO;
 import com.example.backend_gym.Entity.Empleado;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.SqlOutParameter;
 import org.springframework.jdbc.core.SqlParameter;
 import org.springframework.stereotype.Repository;
@@ -104,5 +104,58 @@ public class EmpleadoRepository {
         Integer rowsUpdated = (Integer) result.get("p_rows_updated");
         return rowsUpdated != null && rowsUpdated > 0;
     }
+
+    public void crearEmpleadoMantenimiento(String cedula, String password) {
+        jdbcTemplate.execute("ALTER SESSION SET \"_ORACLE_SCRIPT\"=true");
+        String procedureCall = "{call crear_usuario_mantenimiento(?, ?)}";
+        jdbcTemplate.update(connection -> {
+            var callableStatement = connection.prepareCall(procedureCall);
+            callableStatement.setString(1, cedula);
+            callableStatement.setString(2, password);
+            return callableStatement;
+        });
+    }
+
+    public void crearEmpleadoInstructor(String cedula, String password) {
+        jdbcTemplate.execute("ALTER SESSION SET \"_ORACLE_SCRIPT\"=true");
+        String procedureCall = "{call crear_usuario_instructor(?, ?)}";
+        jdbcTemplate.update(connection -> {
+            var callableStatement = connection.prepareCall(procedureCall);
+            callableStatement.setString(1, cedula);
+            callableStatement.setString(2, password);
+            return callableStatement;
+        });
+    }
+    public void agregarEmpleado(AgregarEmpleadoDTO empleadoDTO) {
+        // Insertar el empleado en la base de datos utilizando el procedimiento almacenado
+        jdbcTemplate.execute((Connection con) -> {
+            CallableStatement callableStatement = con.prepareCall("{call agregar_empleado(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)}");
+            callableStatement.setInt(1, 1);
+            callableStatement.setString(2, empleadoDTO.getNombre());
+            callableStatement.setString(3, empleadoDTO.getApellido1());
+            callableStatement.setString(4, empleadoDTO.getApellido2());
+            callableStatement.setString(5, empleadoDTO.getCedula());
+            callableStatement.setInt(6, empleadoDTO.getTelHabitacion());
+            callableStatement.setDate(7, new java.sql.Date(empleadoDTO.getFechaContratacion().getTime()));
+            callableStatement.setString(8, empleadoDTO.getEmail());
+            callableStatement.setString(9, empleadoDTO.getRol());
+            callableStatement.setString(10, empleadoDTO.getEstado());
+            return callableStatement;
+        }, (CallableStatement callableStatement) -> {
+            callableStatement.execute();
+            return null;
+        });
+
+        // Crear el usuario en Oracle con el rol correspondiente
+        if ("mantenimiento".equalsIgnoreCase(empleadoDTO.getRol())) {
+            crearEmpleadoMantenimiento(empleadoDTO.getCedula(), empleadoDTO.getPassword());
+        } else if ("instructor".equalsIgnoreCase(empleadoDTO.getRol())) {
+            crearEmpleadoInstructor(empleadoDTO.getCedula(), empleadoDTO.getPassword());
+        }
+    }
+
+
+
+
 
 }

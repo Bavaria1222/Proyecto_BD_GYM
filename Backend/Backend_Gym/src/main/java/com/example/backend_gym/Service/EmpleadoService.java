@@ -1,6 +1,7 @@
 package com.example.backend_gym.Service;
 
 
+import com.example.backend_gym.DTO.EmpleadoDto.AgregarEmpleadoDTO;
 import com.example.backend_gym.Entity.Empleado;
 import com.example.backend_gym.Exception.EmpleadoNotFoundException;
 import com.example.backend_gym.Repository.EmpleadoRepository;
@@ -27,27 +28,6 @@ public class EmpleadoService {
         this.empleadoRepository = empleadoRepository;
     }
 
-    public void agregarEmpleado(int idGimnasio, String nombre, String apellido1, String apellido2, String cedula,
-                                int telHabitacion, Date fechaContratacion, String email,
-                                String rol, String estado) {
-        jdbcTemplate.execute((Connection con) -> {
-            CallableStatement callableStatement = con.prepareCall("{call agregar_empleado(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)}");
-            callableStatement.setInt(1, idGimnasio);
-            callableStatement.setString(2, nombre);
-            callableStatement.setString(3, apellido1);
-            callableStatement.setString(4, apellido2);
-            callableStatement.setString(5, cedula);
-            callableStatement.setInt(6, telHabitacion);
-            callableStatement.setDate(7, new java.sql.Date(fechaContratacion.getTime()));
-            callableStatement.setString(8, email);
-            callableStatement.setString(9, rol);
-            callableStatement.setString(10, estado);
-            return callableStatement;
-        }, (CallableStatement callableStatement) -> {
-            callableStatement.execute();
-            return null;
-        });
-    }
     public List<Empleado> obtenerEmpleados() {
         return empleadoRepository.obtenerEmpleados();
     }
@@ -63,4 +43,8 @@ public class EmpleadoService {
             throw new EmpleadoNotFoundException(empleado.getCedula());
         }
     }
+    public void agregarEmpleado(AgregarEmpleadoDTO empleadoDTO) {
+        empleadoRepository.agregarEmpleado(empleadoDTO);
+    }
+
 }

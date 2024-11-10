@@ -4,14 +4,16 @@ import com.example.backend_gym.Class.LoginRequest;
 import com.example.backend_gym.DTO.ClienteDTO.ClienteDTO;
 import com.example.backend_gym.Entity.Cliente;
 import com.example.backend_gym.Repository.ClienteRepository;
+import com.example.backend_gym.Service.UsuarioOracleService;
 import com.example.backend_gym.Service.UsuarioService;
+import com.example.backend_gym.DataSource.DynamicUserContextHolder;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping({"/api"})
+@RequestMapping("/api")
 public class LoginController {
 
     @Autowired
@@ -20,24 +22,34 @@ public class LoginController {
     @Autowired
     private ClienteRepository clienteRepository;
 
+    @Autowired
+    private UsuarioOracleService usuarioOracleService;
+
     @PostMapping("/login")
-    public ResponseEntity<ClienteDTO> login(@RequestBody LoginRequest loginRequest) {
+    public ResponseEntity<ClienteDTO> login(@RequestBody LoginRequest loginRequest, HttpServletRequest request) {
         String username = loginRequest.getUsername();
         String password = loginRequest.getPassword();
 
         // Verificar si el usuario existe
         if (!usuarioService.verificarUsuario(username)) {
-            return ResponseEntity.badRequest().body(null); // O puedes enviar un mensaje
+            return ResponseEntity.badRequest().body(null);
         }
 
         // Validar la contraseña
         if (usuarioService.validarContrasena(username, password)) {
-            Cliente cliente = clienteRepository.obtenerDatosClientePorCedula(username);
+            // Configura el usuario en el contexto inmediatamente después de validarlo
+            DynamicUserContextHolder.setCurrentUser(username);
+            request.getSession().setAttribute("username", username);
 
-            // Obtener el rol del usuario
+            // Obtener datos del cliente y rol del usuario
+            Cliente cliente = clienteRepository.obtenerDatosClientePorCedula(username);
             String rol = usuarioService.obtenerPrimerRolGrantee(username);
 
-            // Crear el DTO
+            // Verificar el usuario conectado a Oracle
+            String usuarioConectadoOracle = usuarioOracleService.obtenerUsuarioConectado(username, password);
+            System.out.println("Usuario de Oracle conectado: " + usuarioConectadoOracle); // Opcional: muestra el usuario conectado
+
+            // Crear el DTO para devolver la información del cliente y rol
             ClienteDTO clienteDTO = new ClienteDTO(
                     cliente.getNombre(),
                     cliente.getApellido1(),
@@ -48,12 +60,7 @@ public class LoginController {
 
             return ResponseEntity.ok(clienteDTO);
         } else {
-            return ResponseEntity.badRequest().body(null); // O puedes enviar un mensaje
+            return ResponseEntity.badRequest().body(null);
         }
     }
-
-
-
-
-
 }
