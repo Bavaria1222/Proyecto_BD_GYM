@@ -54,18 +54,7 @@ const SidebarFooter: FC = () => {
       zIndex={6}
       position="relative"
     >
-      <FooterButton
-        icon={<EventTwoToneIcon fontSize="small" />}
-        tooltipText="Events Calendar"
-      />
-      <FooterButton
-        icon={<SmsTwoToneIcon fontSize="small" />}
-        tooltipText="Messenger"
-      />
-      <FooterButton
-        icon={<PowerSettingsNewTwoToneIcon fontSize="small" />}
-        tooltipText="Logout"
-      />
+
     </Stack>
   );
 };

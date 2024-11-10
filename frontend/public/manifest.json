@@ -3,8 +3,8 @@
   "background_color": "#ffffff",
   "display": "standalone",
   "start_url": ".",
-  "short_name": "UIFORT",
-  "name": "React UI Kit and Admin Dashboard Template",
+  "short_name": "Gym",
+  "name": "Gym UI ",
   "icons": [
     {
       "src": "favicon.ico",

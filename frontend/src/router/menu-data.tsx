@@ -2,6 +2,13 @@ import ArchiveIcon from '@heroicons/react/24/outline/ArchiveBoxIcon';
 import DocumentIcon from '@heroicons/react/24/outline/DocumentMagnifyingGlassIcon';
 import ReportIcon from '@heroicons/react/24/outline/FlagIcon';
 import HomeIcon from '@heroicons/react/24/outline/HomeIcon';
+import UserIcon from '@heroicons/react/24/outline/UserIcon';
+import ClipboardDocumentCheckIcon from '@heroicons/react/24/outline/ClipboardDocumentCheckIcon';
+import BookOpenIcon from '@heroicons/react/24/outline/BookOpenIcon';
+import JournalIcon from '@heroicons/react/24/outline/ClipboardDocumentIcon';
+import BoltIcon from '@heroicons/react/24/outline/BoltIcon';
+import CogIcon from '@heroicons/react/24/outline/CogIcon';
+
 import { Box } from '@mui/material';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -13,82 +20,96 @@ export const useMenuItems = (): MenuItem[] => {
   return useMemo(() => {
     return [
       {
-        title: 'Dashboard',
+        title: '',
         subMenu: [
           {
-            title: 'Home',
+            title: 'Inicio',
             icon: (
-              <Box
-                width={24}
-                height={24}
-              >
+              <Box width={24}
+                height={24}>
                 <HomeIcon />
               </Box>
             ),
             route: routes.index,
           },
           {
-            title: 'Another page',
+            title: 'Clientes',
             icon: (
-              <Box
-                width={24}
-                height={24}
-              >
-                <ReportIcon />
+              <Box width={24}
+                height={24}>
+                <UserIcon />
               </Box>
             ),
-            route: routes.pageExample,
+            route: routes.dummy,
           },
           {
-            title: 'Dropdown menu',
+            title: 'Empleados',
             icon: (
-              <Box
-                width={24}
-                height={24}
-              >
-                <DocumentIcon />
+              <Box width={24}
+                height={24}>
+                <UserIcon />
+              </Box>
+            ),
+            route: routes.dummy,
+          },
+          {
+            title: 'Membresías',
+            icon: (
+              <Box width={24}
+                height={24}>
+                <ClipboardDocumentCheckIcon />
+              </Box>
+            ),
+            route: routes.dummy,
+          },
+          {
+            title: 'Rutina',
+            icon: (
+              <Box width={24}
+                height={24}>
+                <BoltIcon />
+              </Box>
+            ),
+            route: routes.dummy,
+          },
+          {
+            title: 'Máquinas',
+            icon: (
+              <Box width={24}
+                height={24}>
+                <CogIcon />
+              </Box>
+            ),
+            route: routes.dummy,
+          },
+          {
+            title: 'Bitácora',
+            icon: (
+              <Box width={24}
+                height={24}>
+                <JournalIcon />
+              </Box>
+            ),
+            route: routes.dummy,
+          },
+          {
+            title: 'Cursos',
+            icon: (
+              <Box width={24}
+                height={24}>
+                <BookOpenIcon />
               </Box>
             ),
             subMenu: [
               {
-                title: 'Listings',
+                title: 'Listado de Cursos',
                 route: routes.dummy,
               },
               {
-                title: 'Reviews',
+                title: 'Historial de Cursos',
                 route: routes.dummy,
-              },
-              {
-                title: 'Files',
-                subMenu: [
-                  {
-                    title: 'Reports',
-                    route: routes.dummy,
-                  },
-                  {
-                    title: 'Logs',
-                    route: routes.dummy,
-                  },
-                ],
               },
             ],
-          },
-        ],
-      },
-      {
-        title: 'Archive',
-        subMenu: [
-          {
-            title: 'Old Docs',
-            icon: (
-              <Box
-                width={24}
-                height={24}
-              >
-                <ArchiveIcon />
-              </Box>
-            ),
-            route: routes.dummy,
           },
         ],
       },

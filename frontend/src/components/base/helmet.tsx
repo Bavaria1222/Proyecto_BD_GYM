@@ -9,7 +9,7 @@ interface HelmetProps {
 export const Helmet: FC<HelmetProps> = (props) => {
   const { heading } = props;
 
-  const pageTitle = heading ? heading + ' - UIFort' : 'React UI Kit and Admin Dashboard Template';
+  const pageTitle = heading ? heading + ' - UIGYM' : ' UI GYM ';
 
   return (
     <Head>

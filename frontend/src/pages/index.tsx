@@ -1,82 +1,54 @@
-import ChartBarIcon from '@heroicons/react/24/outline/ChartBarIcon';
-import FileDownloadOutlinedIcon from '@mui/icons-material/FileDownloadOutlined';
-import { Box, Button, Container, Divider, Typography, useTheme } from '@mui/material';
-import { useTranslation } from 'react-i18next';
-import { Helmet } from 'src/components/base/helmet';
-import PageHeading from 'src/components/base/page-heading';
-import { AvatarState } from 'src/components/base/styles/avatar';
+import { Box, Container, Typography, Grid } from '@mui/material';
+import { FC } from 'react';
+const logoImage = '/lg.png';
 
-const Page = () => {
-  const theme = useTheme();
-  const { t } = useTranslation();
+
+const Page: FC = () => {
 
   return (
-    <>
-      <Helmet heading="Homepage" />
-      <Box
-        component="main"
-        flex={1}
-        display="flex"
-        flexDirection="column"
-        py={{ xs: 2, sm: 3 }}
+    <Box
+      component="main"
+      display="flex"
+      flexDirection="column"
+      minHeight="100%"
+      sx={{ backgroundColor: '#E9E9E9' }}
+    >
+      <Container
+        disableGutters
+        maxWidth="xl"
+        sx={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', px: { xs: 2, md: 3 } }}
       >
-        <Container
-          disableGutters
-          maxWidth="xl"
+        <Grid container
+          spacing={2}
+          sx={{ width: '100%', mt: { xs: 5, md: 10 }, display: 'flex', justifyContent: 'center', alignItems: 'center', textAlign: 'center' }}
         >
-          <PageHeading
-            sx={{ px: { xs: 2, sm: 3 }, pb: { xs: 2, sm: 3 } }}
-            title="Homepage"
-            description="This is the Home page for the starter template"
-            actions={
-              <>
-                <Button
-                  sx={{ mt: { xs: 2, md: 0 } }}
-                  variant="contained"
-                  startIcon={<FileDownloadOutlinedIcon fontSize="small" />}
-                >
-                  {t('Export')}
-                </Button>
-              </>
-            }
-            iconBox={
-              <AvatarState
-                isSoft
-                variant="rounded"
-                state="primary"
-                sx={{
-                  height: theme.spacing(7),
-                  width: theme.spacing(7),
-                  svg: {
-                    height: theme.spacing(4),
-                    width: theme.spacing(4),
-                    minWidth: theme.spacing(4),
-                  },
-                }}
-              >
-                <ChartBarIcon />
-              </AvatarState>
-            }
-          />
-          <Divider />
-          <Box
-            px={{ xs: 2, sm: 3 }}
-            pt={{ xs: 2, sm: 3 }}
-          >
-            <Typography
-              gutterBottom
-              variant="h4"
-            >
-              This is the Home page for the starter template
+          <Grid item
+            xs={12}>
+            <Box style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+              <img src={logoImage}
+                style={{ width: '100%', maxWidth: '300px', height: 'auto', marginBottom: '16px' }} />
+
+            </Box>
+          </Grid>
+          <Grid item
+            xs={12}>
+            <Typography variant="h3"
+              component="div"
+              sx={{ fontWeight: 'bold', mt: 1, fontSize: { xs: '1.5rem', md: '2.125rem' } }}>
+              Te damos la bienvenida a la administración del Gym.
             </Typography>
-            <Typography variant="subtitle1">
-              In the starter kits you will find a simple, clean and organized folder structure;
-              components, pages, modules, layouts, routes, and other folders.
-            </Typography>
-          </Box>
-        </Container>
+          </Grid>
+        </Grid>
+      </Container>
+      <Box
+        sx={{ textAlign: 'center', py: 1 }}
+      >
+        <Typography variant="body2"
+          sx={{ fontSize: { xs: '0.75rem', md: '0.875rem' }, m: 0 }}>
+          Todos los derechos reservados
+        </Typography>
       </Box>
-    </>
+    </Box>
   );
 };
 

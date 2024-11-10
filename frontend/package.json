@@ -26,6 +26,7 @@
     ]
   },
   "dependencies": {
+    "@cabysis/candy-client": "^1.0.4",
     "@emotion/cache": "11.11.0",
     "@emotion/react": "11.11.1",
     "@emotion/server": "11.11.0",
@@ -52,6 +53,7 @@
     "jss": "10.10.0",
     "jss-rtl": "0.3.0",
     "lodash.isequal": "4.5.0",
+    "lottie-react": "^2.4.0",
     "npm": "10.2.5",
     "nprogress": "0.2.0",
     "numeral": "2.0.6",

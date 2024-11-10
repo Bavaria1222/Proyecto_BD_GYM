@@ -7,6 +7,8 @@ import {
   alpha,
   AppBar,
   Avatar,
+  Box,
+  Button,
   Divider,
   IconButton,
   Stack,
@@ -124,120 +126,32 @@ export const Header: FC<HeaderProps> = (props) => {
             direction="row"
             alignItems="center"
           >
-            {smUp && (
-              <>
-                <IconButton
-                  sx={{
-                    '&:hover': {
-                      background: alpha(theme.palette.secondary.main, 0.04),
-                    },
-                    borderRadius: 50,
-                    '& .MuiSvgIcon-root': {
-                      fontSize: 23,
-                    },
-                    p: 1,
-                  }}
-                  color="inherit"
-                  onClick={widgets.handleOpen}
-                >
-                  <WidgetsOutlinedIcon />
-                </IconButton>
-                <IconButton
-                  id="chat-button"
-                  sx={{
-                    '&:hover': {
-                      background: alpha(theme.palette.secondary.main, 0.04),
-                    },
-                    borderRadius: 50,
-                    '& .MuiSvgIcon-root': {
-                      fontSize: 23,
-                    },
-                    p: 1,
-                  }}
-                  color="inherit"
-                  aria-controls={popoverChat.open ? 'chat-menu' : undefined}
-                  aria-haspopup="true"
-                  aria-expanded={popoverChat.open ? 'true' : undefined}
-                  onClick={popoverChat.handleOpen}
-                  ref={popoverChat.anchorRef}
-                >
-                  <ChatBubbleOutlineRoundedIcon />
-                </IconButton>
-                <IconButton
-                  sx={{
-                    '&:hover': {
-                      background: alpha(theme.palette.secondary.main, 0.04),
-                    },
-                    borderRadius: 50,
-                    '& .MuiSvgIcon-root': {
-                      fontSize: 23,
-                    },
-                    p: 1,
-                  }}
-                  color="inherit"
-                  onClick={notifications.handleOpen}
-                >
-                  <PulseBadge
-                    sx={{
-                      '& .MuiBadge-badge': {
-                        boxShadow: 'none',
-                      },
-                    }}
-                    overlap="rectangular"
-                    anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
-                    variant="dot"
-                    color="success"
-                  >
-                    <NotificationsNoneRoundedIcon />
-                  </PulseBadge>
-                </IconButton>
-              </>
-            )}
+            <Box textAlign="right">
+              <Box
+                sx={{
+                  fontSize: { xs: '1rem', sm: '1.25rem' },
+                  fontWeight: 'bold',
+                }}
+              >
+                Carlos Alvares
+
+              </Box>
+              <Button
+                variant="text"
+                sx={{
+                  lineHeight: 1.2,
+                  padding: 0,
+                  fontSize: { xs: '14px', sm: '18px' },
+                  textDecoration: 'underline',
+                }}
+
+              >
+                Cerrar sesión
+              </Button>
+            </Box>
           </Stack>
 
-          <IconButton
-            id="profile-button"
-            sx={{
-              p: 0,
-              '&:hover': {
-                boxShadow: `0 0 0 3px ${theme.palette.primary.main}`,
-              },
-            }}
-            color="inherit"
-            aria-controls={popover.open ? 'profile-menu' : undefined}
-            aria-haspopup="true"
-            aria-expanded={popover.open ? 'true' : undefined}
-            onClick={popover.handleOpen}
-            ref={popover.anchorRef}
-          >
-            <Avatar
-              alt={user.name}
-              src={user.avatar}
-              sx={{
-                borderRadius: 'inherit',
-                height: 36,
-                width: 36,
-              }}
-            />
-          </IconButton>
-          {!lgUp && (
-            <IconButton
-              onClick={onMobileNav}
-              color="inherit"
-              sx={{
-                '&:hover': {
-                  background: alpha(theme.palette.secondary.main, 0.04),
-                },
-                '& .MuiSvgIcon-root': {
-                  fontSize: 23,
-                },
-                p: 1,
-                borderRadius: 50,
-              }}
-            >
-              <MenuRoundedIcon />
-            </IconButton>
-          )}
+
         </Stack>
       </Stack>
     </HeaderWrapper>
