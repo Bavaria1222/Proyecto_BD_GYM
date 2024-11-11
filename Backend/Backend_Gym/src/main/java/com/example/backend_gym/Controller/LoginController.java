@@ -47,9 +47,9 @@ public class LoginController {
             // Obtener los datos del cliente o empleado según el rol
             Cliente cliente;
             if (rol.toLowerCase().contains("empleado")) {
-                cliente = clienteRepository.obtenerDatosEmpleadoPorCedula(username);
+                cliente = clienteRepository.obtenerDatosEmpleadoPorCedulaLogin(username);
             } else {
-                cliente = clienteRepository.obtenerDatosClientePorCedula(username);
+                cliente = clienteRepository.obtenerDatosClientePorCedulaLogin(username);
             }
 
             // Verificar el usuario conectado a Oracle

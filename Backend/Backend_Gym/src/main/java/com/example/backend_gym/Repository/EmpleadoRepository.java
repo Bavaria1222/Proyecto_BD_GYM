@@ -1,5 +1,6 @@
 package com.example.backend_gym.Repository;
 
+import com.example.backend_gym.DTO.EmpleadoDto.ActualizarEmpleadoDTO;
 import com.example.backend_gym.DTO.EmpleadoDto.AgregarEmpleadoDTO;
 import com.example.backend_gym.Entity.Empleado;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -69,40 +70,30 @@ public class EmpleadoRepository {
     }
 
 
-
-    public boolean actualizarEmpleadoPorCedula(Empleado empleado) {
+    public boolean actualizarEmpleado(String cedula, ActualizarEmpleadoDTO empleadoDTO) {
         String sql = "{call actualizar_empleado_por_cedula(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)}";
 
-        SqlParameter[] parameters = {
-                new SqlParameter(Types.VARCHAR),
-                new SqlParameter(Types.VARCHAR),
-                new SqlParameter(Types.VARCHAR),
-                new SqlParameter(Types.VARCHAR),
-                new SqlParameter(Types.VARCHAR),
-                new SqlParameter(Types.DATE),
-                new SqlParameter(Types.VARCHAR),
-                new SqlParameter(Types.VARCHAR),
-                new SqlParameter(Types.VARCHAR),
-                new SqlOutParameter("p_rows_updated", Types.INTEGER)
-        };
+        return jdbcTemplate.execute((Connection connection) -> {
+            CallableStatement callableStatement = connection.prepareCall(sql);
+            callableStatement.setString(1, cedula);
+            callableStatement.setString(2, empleadoDTO.getNombre());
+            callableStatement.setString(3, empleadoDTO.getApellido1());
+            callableStatement.setString(4, empleadoDTO.getApellido2());
+            callableStatement.setInt(5, empleadoDTO.getTelHabitacion());
+            callableStatement.setDate(6, new java.sql.Date(empleadoDTO.getFechaContratacion().getTime()));
+            callableStatement.setString(7, empleadoDTO.getEmail());
+            callableStatement.setString(8, empleadoDTO.getRol());
+            callableStatement.setString(9, empleadoDTO.getEstado());
 
-        Map<String, Object> result = jdbcTemplate.call(connection -> {
-            CallableStatement cs = connection.prepareCall(sql);
-            cs.setString(1, empleado.getCedula());
-            cs.setString(2, empleado.getNombre());
-            cs.setString(3, empleado.getApellido1());
-            cs.setString(4, empleado.getApellido2());
-            cs.setString(5, String.valueOf(empleado.getTelHabitacion()));
-            cs.setDate(6, new java.sql.Date(empleado.getFechaContratacion().getTime()));
-            cs.setString(7, empleado.getEmail());
-            cs.setString(8, empleado.getRol());
-            cs.setString(9, empleado.getEstado());
-            cs.registerOutParameter(10, Types.INTEGER);
-            return cs;
-        }, List.of(parameters));
+            // Parámetro de salida para filas afectadas
+            callableStatement.registerOutParameter(10, java.sql.Types.INTEGER);
 
-        Integer rowsUpdated = (Integer) result.get("p_rows_updated");
-        return rowsUpdated != null && rowsUpdated > 0;
+            callableStatement.execute();
+
+            // Obtiene el valor del parámetro de salida
+            int filasAfectadas = callableStatement.getInt(10);
+            return filasAfectadas > 0;  // Devuelve true si se afectó alguna fila
+        });
     }
 
     public void crearEmpleadoMantenimiento(String cedula, String password) {
@@ -152,5 +143,13 @@ public class EmpleadoRepository {
             crearEmpleadoInstructor(empleadoDTO.getCedula(), empleadoDTO.getPassword());
         }
     }
+
+    public boolean actualizarEstadoEmpleado(String cedula, String estado) {
+        String sql = "UPDATE empleado SET estado = ? WHERE cedula = ?";
+
+        int filasAfectadas = jdbcTemplate.update(sql, estado, cedula);
+        return filasAfectadas > 0;
+    }
+
 
 }

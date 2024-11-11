@@ -321,24 +321,17 @@ END obtener_roles_grantee;
 ---------   PROCEDURES PARA LOS EMPLEADOS  -----------------
 ---Obtener empleados
 
-CREATE OR REPLACE PROCEDURE obtener_empleados
-IS
-    CURSOR empleados_cursor IS
-        SELECT * FROM Empleado;
-    empleado_record Empleado%ROWTYPE; -- Define a record to store each row
+CREATE OR REPLACE PROCEDURE obtener_empleados (
+    p_empleados OUT SYS_REFCURSOR
+) IS
 BEGIN
-    OPEN empleados_cursor;
-    
-    LOOP
-        FETCH empleados_cursor INTO empleado_record; -- Get the next row
-        EXIT WHEN empleados_cursor%NOTFOUND; -- Exit the loop if no more rows
-        
-        -- Here you can process each employee, for example, print it
-        DBMS_OUTPUT.PUT_LINE('ID: ' || empleado_record.id_usuario || ', Nombre: ' || empleado_record.nombre);
-    END LOOP;
-
-    CLOSE empleados_cursor; -- Close the cursor
+    OPEN p_empleados FOR
+        SELECT id_usuario, id_gimnasio, nombre, apellido1, apellido2, cedula, 
+               tel_habitacion, fecha_contratacion, email, rol, estado
+        FROM Empleado;
 END obtener_empleados;
+/
+
 
 
 
@@ -361,36 +354,34 @@ BEGIN
 END;
 
 ----------- Actualizar empleado por cedula  -------------
-CREATE OR REPLACE PROCEDURE actualizar_empleado_por_cedula (
+CREATE OR REPLACE PROCEDURE actualizar_empleado_por_cedula(
     p_cedula IN VARCHAR2,
     p_nombre IN VARCHAR2,
     p_apellido1 IN VARCHAR2,
     p_apellido2 IN VARCHAR2,
-    p_tel_habitacion IN VARCHAR2,
-    p_fecha_contratacion IN DATE,
+    p_telHabitacion IN NUMBER,
+    p_fechaContratacion IN DATE,
     p_email IN VARCHAR2,
     p_rol IN VARCHAR2,
-    p_estado IN VARCHAR2
+    p_estado IN VARCHAR2,
+    p_filas_afectadas OUT NUMBER
 ) AS
 BEGIN
-    UPDATE empleados
+    UPDATE empleado
     SET nombre = p_nombre,
         apellido1 = p_apellido1,
         apellido2 = p_apellido2,
-        tel_habitacion = p_tel_habitacion,
-        fecha_contratacion = p_fecha_contratacion,
+        tel_habitacion = p_telHabitacion,
+        fecha_contratacion = p_fechaContratacion,
         email = p_email,
         rol = p_rol,
         estado = p_estado
     WHERE cedula = p_cedula;
+    
+    -- Asigna el número de filas afectadas al parámetro de salida
+    p_filas_afectadas := SQL%ROWCOUNT;
+END;
 
-    COMMIT; 
-EXCEPTION
-    WHEN OTHERS THEN
-        ROLLBACK; -- Manejo de errores, deshacer cambios en caso de error
-        RAISE; -- Re-lanzar la excepción
-END actualizar_empleado_por_cedula;
-/
 
 
 
@@ -434,29 +425,42 @@ END;
 
 CREATE OR REPLACE PROCEDURE obtener_datos_empleado (
     p_cedula IN VARCHAR2,
+    p_id_cliente OUT NUMBER,
     p_nombre OUT VARCHAR2,
     p_apellido1 OUT VARCHAR2,
-    p_apellido2 OUT VARCHAR2, -- Nuevo parámetro de salida para apellido2
-    p_cedula_out OUT VARCHAR2
+    p_apellido2 OUT VARCHAR2,
+    p_cedula_out OUT VARCHAR2,
+    p_email OUT VARCHAR2,
+    p_estado OUT VARCHAR2,
+    p_tel_habitacion OUT NUMBER,
+    p_celular OUT NUMBER,
+    p_fecha_registro OUT DATE
 ) IS
 BEGIN
     -- Consulta para obtener los datos del cliente por cédula
-    SELECT nombre, apellido1, apellido2, cedula -- Agregado apellido2
-    INTO p_nombre, p_apellido1, p_apellido2, p_cedula_out
+    SELECT id_cliente, nombre, apellido1, apellido2, cedula, email, estado, tel_habitacion, celular, fecha_registro
+    INTO p_id_cliente, p_nombre, p_apellido1, p_apellido2, p_cedula_out, p_email, p_estado, p_tel_habitacion, p_celular, p_fecha_registro
     FROM EMPLEADO
     WHERE cedula = p_cedula;
 
 EXCEPTION
     WHEN NO_DATA_FOUND THEN
+        p_id_cliente := NULL;
         p_nombre := NULL;
         p_apellido1 := NULL;
-        p_apellido2 := NULL; -- Inicializa apellido2 en caso de no encontrar datos
+        p_apellido2 := NULL;
         p_cedula_out := NULL;
+        p_email := NULL;
+        p_estado := NULL;
+        p_tel_habitacion := NULL;
+        p_celular := NULL;
+        p_fecha_registro := NULL;
         DBMS_OUTPUT.PUT_LINE('No se encontró el cliente con la cédula ' || p_cedula);
     WHEN OTHERS THEN
         DBMS_OUTPUT.PUT_LINE('Ocurrió un error: ' || SQLERRM);
-END obtener_datos_cliente;
+END obtener_datos_empleado;
 /
+
 
 
 
@@ -471,29 +475,43 @@ END obtener_datos_cliente;
 ----Obtener los datos de un cliente
 CREATE OR REPLACE PROCEDURE obtener_datos_cliente (
     p_cedula IN VARCHAR2,
+    p_id_cliente OUT NUMBER,
     p_nombre OUT VARCHAR2,
     p_apellido1 OUT VARCHAR2,
-    p_apellido2 OUT VARCHAR2, -- Nuevo parámetro de salida para apellido2
-    p_cedula_out OUT VARCHAR2
+    p_apellido2 OUT VARCHAR2,
+    p_cedula_out OUT VARCHAR2,
+    p_email OUT VARCHAR2,
+    p_estado OUT VARCHAR2,
+    p_tel_habitacion OUT NUMBER,
+    p_celular OUT NUMBER,
+    p_fecha_registro OUT DATE
 ) IS
 BEGIN
     -- Consulta para obtener los datos del cliente por cédula
-    SELECT nombre, apellido1, apellido2, cedula -- Agregado apellido2
-    INTO p_nombre, p_apellido1, p_apellido2, p_cedula_out
+    SELECT id_cliente, nombre, apellido1, apellido2, cedula, email, estado,
+           tel_habitacion, celular, fecha_registro
+    INTO p_id_cliente, p_nombre, p_apellido1, p_apellido2, p_cedula_out, p_email, p_estado, p_tel_habitacion, p_celular, p_fecha_registro
     FROM Cliente
     WHERE cedula = p_cedula;
 
 EXCEPTION
     WHEN NO_DATA_FOUND THEN
+        p_id_cliente := NULL;
         p_nombre := NULL;
         p_apellido1 := NULL;
-        p_apellido2 := NULL; -- Inicializa apellido2 en caso de no encontrar datos
+        p_apellido2 := NULL;
         p_cedula_out := NULL;
+        p_email := NULL;
+        p_estado := NULL;
+        p_tel_habitacion := NULL;
+        p_celular := NULL;
+        p_fecha_registro := NULL;
         DBMS_OUTPUT.PUT_LINE('No se encontró el cliente con la cédula ' || p_cedula);
     WHEN OTHERS THEN
         DBMS_OUTPUT.PUT_LINE('Ocurrió un error: ' || SQLERRM);
 END obtener_datos_cliente;
 /
+
 
 
 
@@ -764,7 +782,7 @@ INSERT INTO Rutina (id_cliente, id_empleado, id_maquina, horas) VALUES (46, 97, 
 INSERT INTO Rutina (id_cliente, id_empleado, id_maquina, horas) VALUES (46, 97, 29, 1);
 
 
-
+----
 
 -- Inserciones para la tabla Historial_Curso
 INSERT INTO Historial_Curso (id_membresia, id_curso, horas) VALUES (21, 21, 2); -- Cliente 41 en "Yoga Básico"
@@ -772,3 +790,62 @@ INSERT INTO Historial_Curso (id_membresia, id_curso, horas) VALUES (22, 24, 1); 
 INSERT INTO Historial_Curso (id_membresia, id_curso, horas) VALUES (24, 25, 3); -- Cliente 45 en "Crossfit"
 INSERT INTO Historial_Curso (id_membresia, id_curso, horas) VALUES (25, 26, 1); -- Cliente 46 en "Zumba"
 INSERT INTO Historial_Curso (id_membresia, id_curso, horas) VALUES (26, 30, 2); -- Cliente 21 en "Cardio Box"
+
+
+---Procedure para el login
+---Procedure usado para el login
+CREATE OR REPLACE PROCEDURE obtener_datos_empleado_login (
+    p_cedula IN VARCHAR2,
+    p_nombre OUT VARCHAR2,
+    p_apellido1 OUT VARCHAR2,
+    p_apellido2 OUT VARCHAR2,
+    p_cedula_out OUT VARCHAR2
+) IS
+BEGIN
+    -- Consulta para obtener los datos del empleado por cédula
+    SELECT nombre, apellido1, apellido2, cedula
+    INTO p_nombre, p_apellido1, p_apellido2, p_cedula_out
+    FROM Empleado
+    WHERE cedula = p_cedula;
+
+EXCEPTION
+    WHEN NO_DATA_FOUND THEN
+        p_nombre := NULL;
+        p_apellido1 := NULL;
+        p_apellido2 := NULL;
+        p_cedula_out := NULL;
+        DBMS_OUTPUT.PUT_LINE('No se encontró el empleado con la cédula ' || p_cedula);
+    WHEN OTHERS THEN
+        DBMS_OUTPUT.PUT_LINE('Ocurrió un error: ' || SQLERRM);
+END obtener_datos_empleado_login;
+/
+
+
+---Procedure usado para login
+
+CREATE OR REPLACE PROCEDURE obtener_datos_cliente_login (
+    p_cedula IN VARCHAR2,
+    p_nombre OUT VARCHAR2,
+    p_apellido1 OUT VARCHAR2,
+    p_apellido2 OUT VARCHAR2,
+    p_cedula_out OUT VARCHAR2
+) IS
+BEGIN
+    -- Consulta para obtener los datos del cliente por cédula
+    SELECT nombre, apellido1, apellido2, cedula
+    INTO p_nombre, p_apellido1, p_apellido2, p_cedula_out
+    FROM Cliente
+    WHERE cedula = p_cedula;
+
+EXCEPTION
+    WHEN NO_DATA_FOUND THEN
+        -- Si no se encuentra un cliente, se asignan valores NULL a los parámetros de salida
+        p_nombre := NULL;
+        p_apellido1 := NULL;
+        p_apellido2 := NULL;
+        p_cedula_out := NULL;
+        DBMS_OUTPUT.PUT_LINE('No se encontró el cliente con la cédula ' || p_cedula);
+    WHEN OTHERS THEN
+        DBMS_OUTPUT.PUT_LINE('Ocurrió un error: ' || SQLERRM);
+END obtener_datos_cliente_login;
+/

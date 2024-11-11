@@ -1,6 +1,7 @@
 package com.example.backend_gym.Service;
 
 
+import com.example.backend_gym.DTO.EmpleadoDto.ActualizarEmpleadoDTO;
 import com.example.backend_gym.DTO.EmpleadoDto.AgregarEmpleadoDTO;
 import com.example.backend_gym.Entity.Empleado;
 import com.example.backend_gym.Exception.EmpleadoNotFoundException;
@@ -36,15 +37,17 @@ public class EmpleadoService {
         return empleadoRepository.obtenerEmpleadoPorCedula(cedula);
     }
 
-
-    public void actualizarEmpleadoPorCedula(Empleado empleado) {
-        boolean actualizado = empleadoRepository.actualizarEmpleadoPorCedula(empleado);
-        if (!actualizado) {
-            throw new EmpleadoNotFoundException(empleado.getCedula());
-        }
+    public boolean actualizarEmpleado(String cedula, ActualizarEmpleadoDTO empleadoDTO) {
+        return empleadoRepository.actualizarEmpleado(cedula, empleadoDTO);
     }
+
+
     public void agregarEmpleado(AgregarEmpleadoDTO empleadoDTO) {
         empleadoRepository.agregarEmpleado(empleadoDTO);
     }
+    public boolean actualizarEstado(String cedula, String estado) {
+        return empleadoRepository.actualizarEstadoEmpleado(cedula, estado);
+    }
+
 
 }

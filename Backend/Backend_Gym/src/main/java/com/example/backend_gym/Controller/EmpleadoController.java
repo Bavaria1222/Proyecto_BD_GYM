@@ -1,6 +1,7 @@
 package com.example.backend_gym.Controller;
 
 
+import com.example.backend_gym.DTO.EmpleadoDto.ActualizarEmpleadoDTO;
 import com.example.backend_gym.DTO.EmpleadoDto.AgregarEmpleadoDTO;
 import com.example.backend_gym.Entity.Empleado;
 import com.example.backend_gym.Exception.EmpleadoNotFoundException;
@@ -48,31 +49,39 @@ public class EmpleadoController {
     }
 
 
-    @PutMapping("/actualizar-por-cedula")
-    public ResponseEntity<?> actualizarEmpleadoPorCedula(@RequestBody Empleado empleado) {
-        try {
-            empleadoService.actualizarEmpleadoPorCedula(empleado);
-            return ResponseEntity.ok("Empleado actualizado correctamente.");
-        } catch (EmpleadoNotFoundException e) {
-            // Esta excepción será manejada por el GlobalExceptionHandler
-            throw e;
-        } catch (Exception e) {
-            // Loguear el error para debugging
-            e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Error al actualizar el empleado: " + e.getMessage());
+    @PutMapping("/ActualizarEmpleado/{cedula}")
+    public ResponseEntity<String> actualizarEmpleado(
+            @PathVariable String cedula,
+            @RequestBody ActualizarEmpleadoDTO empleadoDTO) {
+        boolean actualizado = empleadoService.actualizarEmpleado(cedula, empleadoDTO);
+
+        if (actualizado) {
+            return ResponseEntity.ok("Empleado actualizado correctamente");
+        } else {
+            return ResponseEntity.status(404).body("Empleado no encontrado");
+        }
+    }
+    @PutMapping("/empleados/{cedula}/{estado}")
+    public ResponseEntity<String> actualizarEstadoEmpleado(
+            @PathVariable String cedula,
+            @PathVariable String estado) {
+
+        if (!estado.equalsIgnoreCase("activo") && !estado.equalsIgnoreCase("inactivo")) {
+            return ResponseEntity.badRequest().body("Estado no válido. Use 'activo' o 'inactivo'.");
+        }
+
+        boolean actualizado = empleadoService.actualizarEstado(cedula, estado);
+
+        if (actualizado) {
+            return ResponseEntity.ok("Estado del empleado actualizado correctamente");
+        } else {
+            return ResponseEntity.status(404).body("Empleado no encontrado");
         }
     }
 
-    @PostMapping("/crear/mantenimiento")
-    public ResponseEntity<String> crearEmpleadoMantenimiento(@RequestParam String cedula, @RequestParam String password) {
-        try {
-            empleadoRepository.crearEmpleadoMantenimiento(cedula, password);
-            return ResponseEntity.ok("Usuario de mantenimiento creado exitosamente.");
-        } catch (Exception e) {
-            return ResponseEntity.status(500).body("Error al crear el usuario: " + e.getMessage());
-        }
-    }
+
+
+
 }
 
 
