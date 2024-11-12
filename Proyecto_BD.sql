@@ -33,9 +33,12 @@ Usuario
 --Triggers
 
 */
--- Creacion del  Tablespace
+-- IMPORTANTE
+alter session set "_ORACLE_SCRIPT"=true;
+
+-- Creacion del  Tablespace (AJUSTAR nombre de usuario en la ruta)
 create tablespace GYM
-datafile'C:\app\CAR\product\21c\oradata\tablespace_gym\gym.dbf'
+datafile'C:\app\CAMBIAR\product\21c\oradata\tablespace_gym\gym.dbf'
 size 100m 
 extent management local 
 autoallocate;
@@ -92,8 +95,6 @@ CREATE TABLE Empleado (
     CONSTRAINT fk_gimnasio_empleado FOREIGN KEY (id_gimnasio) REFERENCES Gimnasio(id_gimnasio)  -- Clave foránea
 ) TABLESPACE GYM;
 
-
-
 ---MEMBRESIA
 CREATE TABLE Membresia(
     id_membresia INT GENERATED ALWAYS AS IDENTITY,
@@ -109,18 +110,16 @@ CREATE TABLE Membresia(
     CONSTRAINT ck_fecha CHECK (fecha_fin > fecha_inicio)
 ) TABLESPACE GYM;
 
-
 ---CURSO
 CREATE TABLE Curso (
     id_curso INT GENERATED ALWAYS AS IDENTITY,  -- ID único del curso
     id_instructor INT,  -- Clave foránea para vincular al instructor
-    descripcion VARCHAR(15), 
-    horario VARCHAR(30),  
-    disponibilidad VARCHAR(10),  
+    descripcion VARCHAR(50), 
+    horario VARCHAR(50),  
+    disponibilidad VARCHAR(15),  
     CONSTRAINT pk_curso PRIMARY KEY (id_curso),  -- Clave primaria
     CONSTRAINT fk_instructor_curso FOREIGN KEY (id_instructor) REFERENCES Empleado(id_usuario)  -- Clave foránea hacia Empleado
 ) TABLESPACE GYM;
-
 
 ---HISTORIAL CURSO
 CREATE TABLE Historial_Curso (
@@ -135,7 +134,6 @@ CREATE TABLE Historial_Curso (
 ) TABLESPACE GYM;
 
 ---TABLA MAQUINA
-
 CREATE TABLE Maquina (
     id_maquina INT GENERATED ALWAYS AS IDENTITY,  -- ID único de la máquina
     nombre VARCHAR(30),
@@ -145,9 +143,7 @@ CREATE TABLE Maquina (
     CONSTRAINT chk_estado_maquina CHECK (estado IN ('operativa', 'en mantenimiento', 'inactiva'))  -- Estado limitado a valores específicos
 ) TABLESPACE GYM;
 
-
 --TABLA RUTINA
-
 CREATE TABLE Rutina (
     id_rutina INT GENERATED ALWAYS AS IDENTITY,  
     id_cliente INT NOT NULL,  
@@ -173,9 +169,7 @@ CREATE TABLE Rutina (
 CREATE ROLE empleado_mantenimiento;
 GRANT DBA TO empleado_mantenimiento;
 
-
 --Rol empleado_instructor
-
 CREATE ROLE empleado_instructor;
 --Iniciar session
 GRANT CREATE SESSION TO empleado_instructor;
@@ -192,12 +186,6 @@ CREATE ROLE cliente;
 GRANT CREATE SESSION to cliente;
 
 
-
-
-
-
-
-
 -------------------------  **FIN** CREACION DE LOS ROLES Y ASIGNACION DE PRIVILEGIOS  -------------------------------------
 
 
@@ -210,8 +198,6 @@ GRANT CREATE SESSION to cliente;
 -------- Procedures para USUARIOS  ------
 
 ------ Procedure para crear un cliente en oracle y asignar el rol de cliente
-
-
 CREATE OR REPLACE PROCEDURE crear_cliente (
     p_cedula IN VARCHAR2,
     p_password IN VARCHAR2
@@ -227,14 +213,7 @@ END crear_cliente;
 /
 
 
-
-
-
-
-
---Este procedimiento tomara la cedula y la contrasena proporcionada como parametros y creara el usuario con rol
---mantenimiento en Oracle
-
+--Este procedimiento tomara la cedula y la contrasena proporcionada como parametros y creara el usuario con rol mantenimiento en Oracle
 CREATE OR REPLACE PROCEDURE crear_usuario_mantenimiento (
     p_cedula IN VARCHAR2,
     p_password IN VARCHAR2
@@ -247,6 +226,8 @@ BEGIN
     EXECUTE IMMEDIATE 'CREATE USER "' || p_cedula || '" IDENTIFIED BY "' || p_password || '"';
     EXECUTE IMMEDIATE 'GRANT empleado_mantenimiento TO "' || p_cedula || '"';
 END;
+
+
 
 --Este procedimiento tomara la cedula y la contrasena proporcionada como parametros y creara el usuario con rol
 --instructor en Oracle
@@ -263,8 +244,9 @@ BEGIN
 END;
 /
 
----- PROCEDURE VERIFICACION DE USUARIOS
 
+
+---- PROCEDURE VERIFICACION DE USUARIOS
 CREATE OR REPLACE PROCEDURE verificar_usuario (
     p_username IN VARCHAR2,
     p_existe OUT NUMBER
@@ -281,6 +263,8 @@ BEGIN
     p_existe := CASE WHEN v_count > 0 THEN 1 ELSE 0 END;
 END verificar_usuario;
 /
+
+
 
 ---Obtener el rol de un usuario
 CREATE OR REPLACE PROCEDURE obtener_roles_grantee (
@@ -314,13 +298,12 @@ EXCEPTION
             CLOSE v_cursor; 
         END IF;
 END obtener_roles_grantee;
-
 /
+
 
 
 ---------   PROCEDURES PARA LOS EMPLEADOS  -----------------
 ---Obtener empleados
-
 CREATE OR REPLACE PROCEDURE obtener_empleados (
     p_empleados OUT SYS_REFCURSOR
 ) IS
@@ -334,24 +317,26 @@ END obtener_empleados;
 
 
 
-
 ------ Procedure Agregar un empleado
-CREATE PROCEDURE agregar_empleado (
-    IN p_id_gimnasio INT,
-    IN p_nombre VARCHAR(50),
-    IN p_apellido1 VARCHAR(50),
-    IN p_apellido2 VARCHAR(50),
-    IN p_cedula VARCHAR(20),
-    IN p_tel_habitacion INT,
-    IN p_fecha_contratacion DATE,
-    IN p_email VARCHAR(100),
-    IN p_rol VARCHAR(50),
-    IN p_estado VARCHAR(20)
-)
+CREATE OR REPLACE PROCEDURE agregar_empleado (
+    p_id_gimnasio INT,
+    p_nombre VARCHAR2,
+    p_apellido1 VARCHAR2,
+    p_apellido2 VARCHAR2,
+    p_cedula VARCHAR2,
+    p_tel_habitacion INT,
+    p_fecha_contratacion DATE,
+    p_email VARCHAR2,
+    p_rol VARCHAR2,
+    p_estado VARCHAR2
+) AS
 BEGIN
-    INSERT INTO empleados (id_gimnasio, nombre, apellido1, apellido2, cedula, tel_habitacion, fecha_contratacion, email, rol, estado)
+    INSERT INTO Empleado (id_gimnasio, nombre, apellido1, apellido2, cedula, tel_habitacion, fecha_contratacion, email, rol, estado)
     VALUES (p_id_gimnasio, p_nombre, p_apellido1, p_apellido2, p_cedula, p_tel_habitacion, p_fecha_contratacion, p_email, p_rol, p_estado);
 END;
+
+
+
 
 ----------- Actualizar empleado por cedula  -------------
 CREATE OR REPLACE PROCEDURE actualizar_empleado_por_cedula(
@@ -381,7 +366,6 @@ BEGIN
     -- Asigna el número de filas afectadas al parámetro de salida
     p_filas_afectadas := SQL%ROWCOUNT;
 END;
-
 
 
 
@@ -421,11 +405,12 @@ EXCEPTION
 END;
 /
 
------- OBTENER LOS DATOS DE UN EMPLEADO
 
+
+------ OBTENER LOS DATOS DE UN EMPLEADO
 CREATE OR REPLACE PROCEDURE obtener_datos_empleado (
     p_cedula IN VARCHAR2,
-    p_id_cliente OUT NUMBER,
+    p_id_usuario OUT NUMBER,
     p_nombre OUT VARCHAR2,
     p_apellido1 OUT VARCHAR2,
     p_apellido2 OUT VARCHAR2,
@@ -433,19 +418,18 @@ CREATE OR REPLACE PROCEDURE obtener_datos_empleado (
     p_email OUT VARCHAR2,
     p_estado OUT VARCHAR2,
     p_tel_habitacion OUT NUMBER,
-    p_celular OUT NUMBER,
-    p_fecha_registro OUT DATE
+    p_fecha_contratacion OUT DATE
 ) IS
 BEGIN
-    -- Consulta para obtener los datos del cliente por cédula
-    SELECT id_cliente, nombre, apellido1, apellido2, cedula, email, estado, tel_habitacion, celular, fecha_registro
-    INTO p_id_cliente, p_nombre, p_apellido1, p_apellido2, p_cedula_out, p_email, p_estado, p_tel_habitacion, p_celular, p_fecha_registro
+    -- Consulta para obtener los datos del empleado por c�dula
+    SELECT id_usuario, nombre, apellido1, apellido2, cedula, email, estado, tel_habitacion, fecha_contratacion
+    INTO p_id_usuario, p_nombre, p_apellido1, p_apellido2, p_cedula_out, p_email, p_estado, p_tel_habitacion, p_fecha_contratacion
     FROM EMPLEADO
     WHERE cedula = p_cedula;
 
 EXCEPTION
     WHEN NO_DATA_FOUND THEN
-        p_id_cliente := NULL;
+        p_id_usuario := NULL;
         p_nombre := NULL;
         p_apellido1 := NULL;
         p_apellido2 := NULL;
@@ -453,24 +437,15 @@ EXCEPTION
         p_email := NULL;
         p_estado := NULL;
         p_tel_habitacion := NULL;
-        p_celular := NULL;
-        p_fecha_registro := NULL;
-        DBMS_OUTPUT.PUT_LINE('No se encontró el cliente con la cédula ' || p_cedula);
+        p_fecha_contratacion := NULL;
+        DBMS_OUTPUT.PUT_LINE('No se encontr� el empleado con la c�dula ' || p_cedula);
     WHEN OTHERS THEN
-        DBMS_OUTPUT.PUT_LINE('Ocurrió un error: ' || SQLERRM);
+        DBMS_OUTPUT.PUT_LINE('Ocurri� un error: ' || SQLERRM);
 END obtener_datos_empleado;
 /
 
 
-
-
-
-
-
-
-
 --Procedure para CLIENTES
-
 
 ----Obtener los datos de un cliente
 CREATE OR REPLACE PROCEDURE obtener_datos_cliente (
@@ -513,9 +488,10 @@ END obtener_datos_cliente;
 /
 
 
-
-
 --------------------------------FIN DE PROCEDURES --------------------------------------
+
+
+
 
 
 ---------------------------------- TRIGGERS --------------------------------------------
@@ -534,6 +510,7 @@ END;
 -------------------
 
 --Triger para que muestre un mensaje cuando se crea un rol instructor 
+
 CREATE OR REPLACE TRIGGER trg_notificar_rol_instructor
 AFTER INSERT ON Empleado
 FOR EACH ROW
@@ -554,10 +531,6 @@ BEGIN
     DBMS_OUTPUT.PUT_LINE('Se ha creado un nuevo cliente con nombre: ' || :NEW.nombre || ' ' || :NEW.apellido1);
 END;
 /
-
-
-
-
 
 
 --Triger de inicio de sesion para cambiar el esquema SYSTEM como predetermiado a todos los usuarios
@@ -593,7 +566,6 @@ AUDIT DROP ANY TABLE BY ACCESS;
 
 
 -------------------------  CREACION DE LOS USUARIOS  -------------------------------------
-
 
 
 
@@ -637,6 +609,7 @@ BEGIN
     crear_usuario_instructor('4444444', 'system');
 END;
 /
+
 BEGIN
     crear_usuario_mantenimiento('5555555', 'system');
     crear_usuario_mantenimiento('6666666', 'system');
@@ -669,7 +642,7 @@ BEGIN
     crear_cliente('3030303', 'system');
     crear_cliente('5050505', 'system');
     crear_cliente('4040404', 'system');
-    crear_cliente('87654323', 'system');
+    --crear_cliente('87654323', 'system');
 END;
 /
 
@@ -678,22 +651,19 @@ END;
 
 
 INSERT INTO Membresia (id_cliente, tipo_membresia, fecha_inicio, fecha_fin, estado, monto)
-VALUES (41, 'Premium', TO_DATE('10/11/2024', 'DD/MM/YYYY'), TO_DATE('10/11/2025', 'DD/MM/YYYY'), 'activo', 500.00);
+VALUES (1, 'Premium', TO_DATE('10/11/2024', 'DD/MM/YYYY'), TO_DATE('10/11/2025', 'DD/MM/YYYY'), 'activo', 500.00);
 
 INSERT INTO Membresia (id_cliente, tipo_membresia, fecha_inicio, fecha_fin, estado, monto)
-VALUES (42, 'Premium', TO_DATE('10/11/2024', 'DD/MM/YYYY'), TO_DATE('10/11/2025', 'DD/MM/YYYY'), 'activo', 500.00);
+VALUES (2, 'Premium', TO_DATE('10/11/2024', 'DD/MM/YYYY'), TO_DATE('10/11/2025', 'DD/MM/YYYY'), 'activo', 500.00);
 
 INSERT INTO Membresia (id_cliente, tipo_membresia, fecha_inicio, fecha_fin, estado, monto)
-VALUES (43, 'Premium', TO_DATE('10/11/2024', 'DD/MM/YYYY'), TO_DATE('10/11/2025', 'DD/MM/YYYY'), 'inactivo', 500.00);
+VALUES (3, 'Premium', TO_DATE('10/11/2024', 'DD/MM/YYYY'), TO_DATE('10/11/2025', 'DD/MM/YYYY'), 'inactivo', 500.00);
 
 INSERT INTO Membresia (id_cliente, tipo_membresia, fecha_inicio, fecha_fin, estado, monto)
-VALUES (45, 'Premium', TO_DATE('10/11/2024', 'DD/MM/YYYY'), TO_DATE('10/11/2025', 'DD/MM/YYYY'), 'activo', 500.00);
+VALUES (4, 'Premium', TO_DATE('10/11/2024', 'DD/MM/YYYY'), TO_DATE('10/11/2025', 'DD/MM/YYYY'), 'activo', 500.00);
 
 INSERT INTO Membresia (id_cliente, tipo_membresia, fecha_inicio, fecha_fin, estado, monto)
-VALUES (46, 'Premium', TO_DATE('10/11/2024', 'DD/MM/YYYY'), TO_DATE('10/11/2025', 'DD/MM/YYYY'), 'activo', 500.00);
-
-INSERT INTO Membresia (id_cliente, tipo_membresia, fecha_inicio, fecha_fin, estado, monto)
-VALUES (21, 'Premium', TO_DATE('31/10/2024', 'DD/MM/YYYY'), TO_DATE('31/10/2025', 'DD/MM/YYYY'), 'activo', 500.00);
+VALUES (5, 'Premium', TO_DATE('10/11/2024', 'DD/MM/YYYY'), TO_DATE('10/11/2025', 'DD/MM/YYYY'), 'activo', 500.00);
 
 
 
@@ -702,28 +672,29 @@ VALUES (21, 'Premium', TO_DATE('31/10/2024', 'DD/MM/YYYY'), TO_DATE('31/10/2025'
 
 
 INSERT INTO Curso (id_instructor, descripcion, horario, disponibilidad)
-VALUES (95, 'Yoga Básico', 'Lunes y Miércoles 8:00-9:00 AM', 'Disponible');
+VALUES (1, 'Yoga Básico', 'Lunes y Miércoles 8:00-9:00 AM', 'Disponible');
 
 INSERT INTO Curso (id_instructor, descripcion, horario, disponibilidad)
-VALUES (96, 'Pilates Intermedio', 'Martes y Jueves 10:00-11:00 AM', 'Disponible');
+VALUES (2, 'Pilates Intermedio', 'Martes y Jueves 10:00-11:00 AM', 'Disponible');
 
 INSERT INTO Curso (id_instructor, descripcion, horario, disponibilidad)
-VALUES (97, 'HIIT Avanzado', 'Lunes, Miércoles y Viernes 6:00-7:00 AM', 'Disponible');
+VALUES (3, 'HIIT Avanzado', 'Lunes, Miércoles y Viernes 6:00-7:00 AM', 'Disponible');
 
 INSERT INTO Curso (id_instructor, descripcion, horario, disponibilidad)
-VALUES (98, 'Cardio Box', 'Martes y Jueves 5:00-6:00 PM', 'Disponible');
+VALUES (4, 'Cardio Box', 'Martes y Jueves 5:00-6:00 PM', 'Disponible');
 
 INSERT INTO Curso (id_instructor, descripcion, horario, disponibilidad)
-VALUES (94, 'Crossfit', 'Sábados 9:00-11:00 AM', 'Disponible');
+VALUES (5, 'Crossfit', 'Sábados 9:00-11:00 AM', 'Disponible');
 
 INSERT INTO Curso (id_instructor, descripcion, horario, disponibilidad)
-VALUES (95, 'Zumba', 'Viernes 6:00-7:00 PM', 'Disponible');
+VALUES (6, 'Zumba', 'Viernes 6:00-7:00 PM', 'Disponible');
 
 
 
 ---cambiar varchar a 30
-ALTER TABLE Maquina
-MODIFY (nombre VARCHAR(30));
+/*ALTER TABLE Maquina
+MODIFY (nombre VARCHAR(30));*/
+
 INSERT INTO Maquina (nombre, descripcion, estado)
 VALUES ('Cinta de correr', 'Ejercicio de carrera', 'operativa');
 
@@ -760,36 +731,36 @@ VALUES ('Máquina de abdominales', 'Fortalecimiento abdominal', 'en mantenimient
 
 
 
--- Rutina para el cliente Carlos Ramírez (id_cliente = 41) asignada al instructor Ricardo Santos (id_empleado = 95)
-INSERT INTO Rutina (id_cliente, id_empleado, id_maquina, horas) VALUES (41, 95, 1, 1);
-INSERT INTO Rutina (id_cliente, id_empleado, id_maquina, horas) VALUES (41, 95, 4, 1);
-INSERT INTO Rutina (id_cliente, id_empleado, id_maquina, horas) VALUES (41, 95, 8, 1);
-INSERT INTO Rutina (id_cliente, id_empleado, id_maquina, horas) VALUES (41, 95, 11, 1);
-INSERT INTO Rutina (id_cliente, id_empleado, id_maquina, horas) VALUES (41, 95, 12, 1);
+-- Rutina para el cliente Carlos Ramírez (id_cliente) asignada al instructor Ricardo Santos (id_empleado)
+INSERT INTO Rutina (id_cliente, id_empleado, id_maquina, horas) VALUES (1, 1, 1, 1);
+INSERT INTO Rutina (id_cliente, id_empleado, id_maquina, horas) VALUES (1, 1, 4, 1);
+INSERT INTO Rutina (id_cliente, id_empleado, id_maquina, horas) VALUES (1, 1, 8, 1);
+INSERT INTO Rutina (id_cliente, id_empleado, id_maquina, horas) VALUES (1, 1, 9, 1);
+INSERT INTO Rutina (id_cliente, id_empleado, id_maquina, horas) VALUES (1, 1, 10, 1);
 
--- Rutina para la cliente María Fernández (id_cliente = 42) asignada al instructor Lorena Méndez (id_empleado = 96)
-INSERT INTO Rutina (id_cliente, id_empleado, id_maquina, horas) VALUES (42, 96, 5, 1);
-INSERT INTO Rutina (id_cliente, id_empleado, id_maquina, horas) VALUES (42, 96, 14, 1);
-INSERT INTO Rutina (id_cliente, id_empleado, id_maquina, horas) VALUES (42, 96, 15, 1);
-INSERT INTO Rutina (id_cliente, id_empleado, id_maquina, horas) VALUES (42, 96, 18, 1);
-INSERT INTO Rutina (id_cliente, id_empleado, id_maquina, horas) VALUES (42, 96, 21, 1);
+-- Rutina para la cliente María Fernández (id_cliente) asignada al instructor Lorena Méndez (id_empleado)
+INSERT INTO Rutina (id_cliente, id_empleado, id_maquina, horas) VALUES (2, 2, 5, 1);
+INSERT INTO Rutina (id_cliente, id_empleado, id_maquina, horas) VALUES (2, 2, 2, 1);
+INSERT INTO Rutina (id_cliente, id_empleado, id_maquina, horas) VALUES (2, 2, 7, 1);
+INSERT INTO Rutina (id_cliente, id_empleado, id_maquina, horas) VALUES (2, 2, 5, 1);
+INSERT INTO Rutina (id_cliente, id_empleado, id_maquina, horas) VALUES (2, 2, 10, 1);
 
--- Rutina para la cliente Ana Rodríguez (id_cliente = 46) asignada al instructor Esteban Solano (id_empleado = 97)
-INSERT INTO Rutina (id_cliente, id_empleado, id_maquina, horas) VALUES (46, 97, 22, 1);
-INSERT INTO Rutina (id_cliente, id_empleado, id_maquina, horas) VALUES (46, 97, 24, 1);
-INSERT INTO Rutina (id_cliente, id_empleado, id_maquina, horas) VALUES (46, 97, 25, 1);
-INSERT INTO Rutina (id_cliente, id_empleado, id_maquina, horas) VALUES (46, 97, 28, 1);
-INSERT INTO Rutina (id_cliente, id_empleado, id_maquina, horas) VALUES (46, 97, 29, 1);
+-- Rutina para la cliente Ana Rodríguez (id_cliente) asignada al instructor Esteban Solano (id_empleado)
+INSERT INTO Rutina (id_cliente, id_empleado, id_maquina, horas) VALUES (4, 3, 10, 1);
+INSERT INTO Rutina (id_cliente, id_empleado, id_maquina, horas) VALUES (4, 3, 1, 1);
+INSERT INTO Rutina (id_cliente, id_empleado, id_maquina, horas) VALUES (4, 3, 9, 1);
+INSERT INTO Rutina (id_cliente, id_empleado, id_maquina, horas) VALUES (4, 3, 8, 1);
+INSERT INTO Rutina (id_cliente, id_empleado, id_maquina, horas) VALUES (4, 3, 3, 1);
 
 
 ----
 
 -- Inserciones para la tabla Historial_Curso
-INSERT INTO Historial_Curso (id_membresia, id_curso, horas) VALUES (21, 21, 2); -- Cliente 41 en "Yoga Básico"
-INSERT INTO Historial_Curso (id_membresia, id_curso, horas) VALUES (22, 24, 1); -- Cliente 42 en "Cardio Box"
-INSERT INTO Historial_Curso (id_membresia, id_curso, horas) VALUES (24, 25, 3); -- Cliente 45 en "Crossfit"
-INSERT INTO Historial_Curso (id_membresia, id_curso, horas) VALUES (25, 26, 1); -- Cliente 46 en "Zumba"
-INSERT INTO Historial_Curso (id_membresia, id_curso, horas) VALUES (26, 30, 2); -- Cliente 21 en "Cardio Box"
+INSERT INTO Historial_Curso (id_membresia, id_curso, horas) VALUES (1, 1, 2); -- Cliente en "Yoga Básico"
+INSERT INTO Historial_Curso (id_membresia, id_curso, horas) VALUES (2, 4, 1); -- Cliente en "Cardio Box"
+INSERT INTO Historial_Curso (id_membresia, id_curso, horas) VALUES (3, 5, 3); -- Cliente en "Crossfit"
+INSERT INTO Historial_Curso (id_membresia, id_curso, horas) VALUES (4, 6, 1); -- Cliente en "Zumba"
+INSERT INTO Historial_Curso (id_membresia, id_curso, horas) VALUES (5, 4, 2); -- Cliente en "Cardio Box"
 
 
 ---Procedure para el login
