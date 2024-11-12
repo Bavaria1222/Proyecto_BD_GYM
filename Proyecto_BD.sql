@@ -820,3 +820,261 @@ EXCEPTION
         DBMS_OUTPUT.PUT_LINE('Ocurrió un error: ' || SQLERRM);
 END obtener_datos_cliente_login;
 /
+
+
+
+--Procedures para Curso
+
+CREATE OR REPLACE PROCEDURE agregar_curso (
+    p_id_instructor IN INT,
+    p_descripcion IN VARCHAR2,
+    p_horario IN VARCHAR2,
+    p_disponibilidad IN VARCHAR2
+) AS
+BEGIN
+    INSERT INTO Curso (id_instructor, descripcion, horario, disponibilidad)
+    VALUES (p_id_instructor, p_descripcion, p_horario, p_disponibilidad);
+END agregar_curso;
+/
+
+
+CREATE OR REPLACE PROCEDURE obtener_curso_por_id (
+    p_id_curso IN INT,
+    p_id_instructor OUT INT,
+    p_descripcion OUT VARCHAR2,
+    p_horario OUT VARCHAR2,
+    p_disponibilidad OUT VARCHAR2
+) AS
+BEGIN
+    SELECT id_instructor, descripcion, horario, disponibilidad
+    INTO p_id_instructor, p_descripcion, p_horario, p_disponibilidad
+    FROM Curso
+    WHERE id_curso = p_id_curso;
+EXCEPTION
+    WHEN NO_DATA_FOUND THEN
+        p_id_instructor := NULL;
+        p_descripcion := NULL;
+        p_horario := NULL;
+        p_disponibilidad := NULL;
+END obtener_curso_por_id;
+/
+
+
+CREATE OR REPLACE PROCEDURE obtener_todos_los_cursos (
+    p_cursos OUT SYS_REFCURSOR
+) AS
+BEGIN
+    OPEN p_cursos FOR
+        SELECT id_curso, id_instructor, descripcion, horario, disponibilidad
+        FROM Curso;
+END obtener_todos_los_cursos;
+/
+
+
+CREATE OR REPLACE PROCEDURE actualizar_curso (
+    p_id_curso IN INT,
+    p_id_instructor IN INT,
+    p_descripcion IN VARCHAR2,
+    p_horario IN VARCHAR2,
+    p_disponibilidad IN VARCHAR2,
+    p_filas_afectadas OUT INT
+) AS
+BEGIN
+    UPDATE Curso
+    SET id_instructor = p_id_instructor,
+        descripcion = p_descripcion,
+        horario = p_horario,
+        disponibilidad = p_disponibilidad
+    WHERE id_curso = p_id_curso;
+
+    p_filas_afectadas := SQL%ROWCOUNT;
+END actualizar_curso;
+/
+
+
+CREATE OR REPLACE PROCEDURE eliminar_curso (
+    p_id_curso IN INT
+) AS
+BEGIN
+    DELETE FROM Curso WHERE id_curso = p_id_curso;
+END eliminar_curso;
+/
+
+
+
+--Procedures para Gimnasio
+
+CREATE OR REPLACE PROCEDURE agregar_gimnasio (
+    p_nombre IN VARCHAR2,
+    p_direccion IN VARCHAR2,
+    p_email IN VARCHAR2,
+    p_horario IN VARCHAR2,
+    p_tel_habitacion IN INT,
+    p_celular IN INT
+) AS
+BEGIN
+    INSERT INTO Gimnasio (nombre, direccion, email, horario, tel_habitacion, celular)
+    VALUES (p_nombre, p_direccion, p_email, p_horario, p_tel_habitacion, p_celular);
+END agregar_gimnasio;
+/
+
+
+CREATE OR REPLACE PROCEDURE obtener_gimnasio_por_id (
+    p_id_gimnasio IN INT,
+    p_nombre OUT VARCHAR2,
+    p_direccion OUT VARCHAR2,
+    p_email OUT VARCHAR2,
+    p_horario OUT VARCHAR2,
+    p_tel_habitacion OUT INT,
+    p_celular OUT INT
+) AS
+BEGIN
+    SELECT nombre, direccion, email, horario, tel_habitacion, celular
+    INTO p_nombre, p_direccion, p_email, p_horario, p_tel_habitacion, p_celular
+    FROM Gimnasio
+    WHERE id_gimnasio = p_id_gimnasio;
+EXCEPTION
+    WHEN NO_DATA_FOUND THEN
+        p_nombre := NULL;
+        p_direccion := NULL;
+        p_email := NULL;
+        p_horario := NULL;
+        p_tel_habitacion := NULL;
+        p_celular := NULL;
+END obtener_gimnasio_por_id;
+/
+
+
+CREATE OR REPLACE PROCEDURE obtener_todos_los_gimnasios (
+    p_gimnasios OUT SYS_REFCURSOR
+) AS
+BEGIN
+    OPEN p_gimnasios FOR
+        SELECT id_gimnasio, nombre, direccion, email, horario, tel_habitacion, celular
+        FROM Gimnasio;
+END obtener_todos_los_gimnasios;
+/
+
+
+CREATE OR REPLACE PROCEDURE actualizar_gimnasio (
+    p_id_gimnasio IN INT,
+    p_nombre IN VARCHAR2,
+    p_direccion IN VARCHAR2,
+    p_email IN VARCHAR2,
+    p_horario IN VARCHAR2,
+    p_tel_habitacion IN INT,
+    p_celular IN INT,
+    p_filas_afectadas OUT INT
+) AS
+BEGIN
+    UPDATE Gimnasio
+    SET nombre = p_nombre,
+        direccion = p_direccion,
+        email = p_email,
+        horario = p_horario,
+        tel_habitacion = p_tel_habitacion,
+        celular = p_celular
+    WHERE id_gimnasio = p_id_gimnasio;
+
+    p_filas_afectadas := SQL%ROWCOUNT;
+END actualizar_gimnasio;
+/
+
+
+CREATE OR REPLACE PROCEDURE eliminar_gimnasio (
+    p_id_gimnasio IN INT
+) AS
+BEGIN
+    DELETE FROM Gimnasio WHERE id_gimnasio = p_id_gimnasio;
+END eliminar_gimnasio;
+/
+
+
+
+--Procedures para Curso
+
+CREATE OR REPLACE PROCEDURE agregar_membresia (
+    p_id_cliente IN INT,
+    p_tipo_membresia IN VARCHAR2,
+    p_fecha_inicio IN DATE,
+    p_fecha_fin IN DATE,
+    p_estado IN VARCHAR2,
+    p_monto IN NUMBER
+) AS
+BEGIN
+    INSERT INTO Membresia (id_cliente, tipo_membresia, fecha_inicio, fecha_fin, estado, monto)
+    VALUES (p_id_cliente, p_tipo_membresia, p_fecha_inicio, p_fecha_fin, p_estado, p_monto);
+END agregar_membresia;
+/
+
+
+CREATE OR REPLACE PROCEDURE obtener_membresia_por_id (
+    p_id_membresia IN INT,
+    p_id_cliente OUT INT,
+    p_tipo_membresia OUT VARCHAR2,
+    p_fecha_inicio OUT DATE,
+    p_fecha_fin OUT DATE,
+    p_estado OUT VARCHAR2,
+    p_monto OUT NUMBER
+) AS
+BEGIN
+    SELECT id_cliente, tipo_membresia, fecha_inicio, fecha_fin, estado, monto
+    INTO p_id_cliente, p_tipo_membresia, p_fecha_inicio, p_fecha_fin, p_estado, p_monto
+    FROM Membresia
+    WHERE id_membresia = p_id_membresia;
+
+EXCEPTION
+    WHEN NO_DATA_FOUND THEN
+        p_id_cliente := NULL;
+        p_tipo_membresia := NULL;
+        p_fecha_inicio := NULL;
+        p_fecha_fin := NULL;
+        p_estado := NULL;
+        p_monto := NULL;
+END obtener_membresia_por_id;
+/
+
+
+CREATE OR REPLACE PROCEDURE obtener_todas_las_membresias (
+    p_membresias OUT SYS_REFCURSOR
+) AS
+BEGIN
+    OPEN p_membresias FOR
+        SELECT id_membresia, id_cliente, tipo_membresia, fecha_inicio, fecha_fin, estado, monto
+        FROM Membresia;
+END obtener_todas_las_membresias;
+/
+
+
+CREATE OR REPLACE PROCEDURE actualizar_membresia (
+    p_id_membresia IN INT,
+    p_id_cliente IN INT,
+    p_tipo_membresia IN VARCHAR2,
+    p_fecha_inicio IN DATE,
+    p_fecha_fin IN DATE,
+    p_estado IN VARCHAR2,
+    p_monto IN NUMBER,
+    p_filas_afectadas OUT INT
+) AS
+BEGIN
+    UPDATE Membresia
+    SET id_cliente = p_id_cliente,
+        tipo_membresia = p_tipo_membresia,
+        fecha_inicio = p_fecha_inicio,
+        fecha_fin = p_fecha_fin,
+        estado = p_estado,
+        monto = p_monto
+    WHERE id_membresia = p_id_membresia;
+
+    p_filas_afectadas := SQL%ROWCOUNT;
+END actualizar_membresia;
+/
+
+
+CREATE OR REPLACE PROCEDURE eliminar_membresia (
+    p_id_membresia IN INT
+) AS
+BEGIN
+    DELETE FROM Membresia WHERE id_membresia = p_id_membresia;
+END eliminar_membresia;
+/
