@@ -115,7 +115,7 @@ export const useMenuItems = (): MenuItem[] => {
                 <JournalIcon />
               </Box>
             ),
-            route: routes.dummy,
+            route: routes.bitacoras,
           },
           {
             title: 'Cursos',

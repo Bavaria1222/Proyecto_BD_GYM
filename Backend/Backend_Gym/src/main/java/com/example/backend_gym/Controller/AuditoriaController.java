@@ -15,7 +15,7 @@ public class AuditoriaController {
     @Autowired
     private AuditoriaService auditoriaService;
 
-    @GetMapping
+    @GetMapping("/auditoria")
     public List<AuditoriaDTO> obtenerAuditoria(
             @RequestParam("fechaInicio") @DateTimeFormat(pattern = "yyyy-MM-dd") Date fechaInicio,
             @RequestParam("fechaFin") @DateTimeFormat(pattern = "yyyy-MM-dd") Date fechaFin) {

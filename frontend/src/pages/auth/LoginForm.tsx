@@ -25,14 +25,14 @@ import { routes } from 'src/router/routes';
 import { z as zod } from 'zod';
 
 const schema = zod.object({
-  username: zod.string().min(1, { message: 'Nombre de usuario requerido' }),
+  cedula: zod.string().min(1, { message: 'Cédula requerida' }),
   password: zod.string().min(1, { message: 'Contraseña requerida' }),
 });
 
 type Values = zod.infer<typeof schema>;
 
 const defaultValues = {
-  username: '',
+  cedula: '',
   password: '',
 } satisfies Values;
 
@@ -54,7 +54,7 @@ export function LoginForm(): React.JSX.Element {
   const onSubmit = async (values: Values): Promise<void> => {
     setIsPending(true);
     try {
-      await Login(values.username, values.password);
+      await Login(values.cedula, values.password);
       navigate('/');
     } catch (e) {
       setError('root', {
@@ -101,25 +101,25 @@ export function LoginForm(): React.JSX.Element {
             <Grid xs={12}>
               <FormControl
                 fullWidth
-                error={Boolean(errors.username)}
+                error={Boolean(errors.cedula)}
               >
                 <Typography
                   variant="h6"
                   gutterBottom
                   component="label"
-                  htmlFor="username-input"
+                  htmlFor="cedula-input"
                   fontWeight={500}
                 >
-                  Nombre de Usuario
+                  Cédula
                 </Typography>
                 <FilledInput
                   hiddenLabel
-                  {...register('username')}
+                  {...register('cedula')}
                   type="text"
-                  id="username-input"
-                  placeholder="Escriba su nombre de usuario"
+                  id="cedula-input"
+                  placeholder="Escriba su cédula"
                 />
-                {errors.username && <FormHelperText>{errors.username.message}</FormHelperText>}
+                {errors.cedula && <FormHelperText>{errors.cedula.message}</FormHelperText>}
               </FormControl>
             </Grid>
             <Grid xs={12}>
@@ -172,7 +172,7 @@ export function LoginForm(): React.JSX.Element {
               >
                 Acceder
               </Button>
-              <Typography align="center" variant="body2">
+              <Typography align="center" variant="body2" mt={2}>
                 ¿No tienes una cuenta?{' '}
                 <RouterLink to="/register">Regístrate</RouterLink>
               </Typography>

@@ -11,5 +11,5 @@ export const routes = {
   maquina: '/maquina',
   membresias: '/membresias',
   membresia: '/membresia',
-
+  bitacoras: '/bitacoras',
 };

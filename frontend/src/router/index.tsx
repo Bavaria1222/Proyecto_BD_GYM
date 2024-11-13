@@ -13,6 +13,7 @@ import { routes } from './routes';
 import Maquina from 'src/pages/maquina/maquina';
 import MembresiasLista from 'src/pages/membresias/membresias';
 import Membresia from 'src/pages/membresias/membresia';
+import { Auditoria } from 'src/pages/auditoria/Auditoria';
 
 
 function ProtectedRoute({ children }) {
@@ -56,6 +57,7 @@ export const routesOutlets: RouteObject[] = [
       { path: 'membresias', element: <MembresiasLista /> },
       { path: 'membresia', element: <Membresia /> },
       { path: '/membresia/:id', element: <Membresia /> },
+      { path: 'bitacoras', element: <Auditoria /> },
     ],
   },
   { path: 'login', element: <Login /> },        // Ruta de login sin Layout
