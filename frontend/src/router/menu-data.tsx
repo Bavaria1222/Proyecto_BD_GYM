@@ -103,7 +103,7 @@ export const useMenuItems = (): MenuItem[] => {
                 <CogIcon />
               </Box>
             ),
-            route: routes.dummy,
+            route: routes.maquinas,
           },
           {
             title: 'Bitácora',

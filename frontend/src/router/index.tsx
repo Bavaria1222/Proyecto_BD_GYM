@@ -6,6 +6,7 @@ import Login from 'src/pages/auth/Login';
 import Empleado from 'src/pages/empleados/empleado';
 import EmpleadosLista from 'src/pages/empleados/empleados';
 import GimnasiosLista from 'src/pages/gimnasio/gimnasios';
+import MaquinasLista from 'src/pages/maquina/maquinas';
 // import { Layout as LayoutBase } from "src/layouts/base";
 import { routes } from './routes';
 
@@ -48,6 +49,7 @@ export const routesOutlets: RouteObject[] = [
       { path: 'empleado', element: <Empleado /> },
       { path: 'empleado/:id', element: <Empleado /> },
       { path: 'gimnasios', element: <GimnasiosLista /> },
+      { path: 'maquinas', element: <MaquinasLista /> },
     ],
   },
   { path: 'login', element: <Login /> },

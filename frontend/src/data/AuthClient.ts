@@ -68,5 +68,8 @@ export class AuthClient extends CandyClient {
     return this.get(`/Gimnnasio`);
   }
 
-
+  //Maquinas
+  async getMaquinas() {
+    return this.get(`/ObtenerMaquinas`);
+  }
 }
