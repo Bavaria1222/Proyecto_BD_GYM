@@ -24,29 +24,8 @@ const GimnasiosLista = () => {
     new THeader('Correo', 'email', 30),
   ];
 
-  const handleEdit = async () => {
-    navigate(routes.empleado + '/' + selectedRow.cedula);
-  };
 
-  const onProcess = async () => {
-    const id = selectedRow.cedula;
-    try {
-      // await PatchRoleStatus(id);
-    } catch (error) {
-      console.log(error);
-      throw error;
-    }
-  };
 
-  const actions = [
-    new TActions(
-      ModalTypes.YesNo,
-      ` ${getActionText(selectedRow?.status)} `,
-      onProcess,
-      `¿Está segura que desea ${getActionText(selectedRow?.status).toLowerCase()} el registro?`
-    ),
-    new TActions(ModalTypes.None, 'Editar', handleEdit),
-  ];
 
   const loadEmpleados = useCallback(async () => {
     const gimnasios = await GetGimnasios();
@@ -65,14 +44,13 @@ const GimnasiosLista = () => {
       breadcrumbs={breadcrumbs}
       isExportable={false}
       redirectLabel="Agregar"
-      redirectTo={routes.empleado}
+      redirectTo={""}
     >
       <CandyTableGeneric
         headers={headers}
-        isActionsEnabled={true}
+        isActionsEnabled={false}
         onLoadData={loadEmpleados}
         showFilter={true}
-        actions={actions}
         onSelectItem={handleSelectItem}
       />
     </CandyPage>

@@ -31,6 +31,12 @@ export const routesOutlets: RouteObject[] = [
   {
     path: '/',
     element: (
+      /*<ProtectedRoute>
+        <Layout>
+          <Outlet />
+        </Layout>
+      </ProtectedRoute>
+*/
       <Layout>
         <Outlet />
       </Layout>
