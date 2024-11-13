@@ -5,7 +5,6 @@ import { TActions, ModalTypes } from 'src/models/action-types';
 import React, { useCallback, useState } from 'react';
 import { getActionText } from 'src/utils/actions-utils';
 import { routes } from 'src/router/routes';
-import GetEmpleados from 'src/domain/empleados/GetEmpleados';
 import { useNavigate } from 'react-router-dom';
 import PatchStatusEmpleado from 'src/domain/empleados/PatchEstadoEmpleado';
 import GetMaquinas from 'src/domain/maquinas/GetMaquinas';
@@ -25,7 +24,7 @@ const MaquinasLista = () => {
     ];
 
     const handleEdit = async () => {
-        navigate(routes.empleado + "/" + selectedRow.cedula);
+        navigate(routes.maquina + "/" + selectedRow.cedula);
     };
 
     const onProcess = async () => {
@@ -70,7 +69,7 @@ const MaquinasLista = () => {
             breadcrumbs={breadcrumbs}
             isExportable={false}
             redirectLabel="Agregar"
-            redirectTo={routes.empleado}
+            redirectTo={routes.maquina}
         >
             <CandyTableGeneric
                 headers={headers}

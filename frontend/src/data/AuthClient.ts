@@ -72,4 +72,12 @@ export class AuthClient extends CandyClient {
   async getMaquinas() {
     return this.get(`/ObtenerMaquinas`);
   }
+ 
+  async getMaquina(id: string) {
+    return this.get(`/ObtenerMaquinas/${id}`);
+  }
+  async postMaquina(MaquinaDto) {
+    return this.post(`/CrearMaquina`, MaquinaDto);
+  }
+  
 }
