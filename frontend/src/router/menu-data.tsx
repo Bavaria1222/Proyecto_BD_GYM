@@ -79,7 +79,7 @@ export const useMenuItems = (): MenuItem[] => {
                 <ClipboardDocumentCheckIcon />
               </Box>
             ),
-            route: routes.dummy,
+            route: routes.membresias,
           },
           {
             title: 'Rutina',

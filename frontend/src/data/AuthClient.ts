@@ -62,10 +62,28 @@ export class AuthClient extends CandyClient {
   async patchEmpleado(id: string, updateUserDTO) {
     return this.patch(`/actualizarEmpleado/${id}`, updateUserDTO);
   }
+    //Membresias
+    async getMembresias() {
+      return this.get(`/membresias/todas`);
+    }
+  
+  
+    async getMembresia(id: string) {
+      return this.get(`/membresias/${id}`);
+    }
+  
+    async postMembresias(membresiaDto) {
+      return this.post(`/membresias/crear`, membresiaDto);
+    }
+  
+    async patchMembresia(id: string, updatemembresiaDto) {
+      return this.patch(`membresias/actualizar/${id}`, updatemembresiaDto);
+    }
+
   //Gimnasio
 
   async getGimnasios() {
-    return this.get(`/Gimnnasio`);
+    return this.get(`/Gimnnasios/todos`);
   }
 
 

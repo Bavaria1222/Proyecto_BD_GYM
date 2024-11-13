@@ -8,6 +8,8 @@ import EmpleadosLista from 'src/pages/empleados/empleados';
 import GimnasiosLista from 'src/pages/gimnasio/gimnasios';
 // import { Layout as LayoutBase } from "src/layouts/base";
 import { routes } from './routes';
+import MembresiasLista from 'src/pages/membresias/membresias';
+import Membresia from 'src/pages/membresias/membresia';
 
 function ProtectedRoute({ children }) {
   const userData = JSON.parse(localStorage.getItem('userData'));
@@ -48,6 +50,9 @@ export const routesOutlets: RouteObject[] = [
       { path: 'empleado', element: <Empleado /> },
       { path: 'empleado/:id', element: <Empleado /> },
       { path: 'gimnasios', element: <GimnasiosLista /> },
+      { path: 'membresias', element: <MembresiasLista /> },
+      { path: 'membresia', element: <Membresia /> },
+      { path: '/membresia/:id', element: <Membresia /> },
     ],
   },
   { path: 'login', element: <Login /> },
