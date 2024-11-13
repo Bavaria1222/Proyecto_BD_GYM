@@ -18,7 +18,7 @@ import {
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router';
-import { RouterLink } from 'src/components/base/router-link';
+import { Link as RouterLink } from 'react-router-dom';
 import { ButtonIcon } from 'src/components/base/styles/button-icon';
 import { Login } from 'src/domain/login';
 import { routes } from 'src/router/routes';
@@ -172,6 +172,10 @@ export function LoginForm(): React.JSX.Element {
               >
                 Acceder
               </Button>
+              <Typography align="center" variant="body2">
+                ¿No tienes una cuenta?{' '}
+                <RouterLink to="/register">Regístrate</RouterLink>
+              </Typography>
             </Grid>
             {errors.root && (
               <Grid xs={12}>

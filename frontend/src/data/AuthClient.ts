@@ -41,6 +41,20 @@ export class AuthClient extends CandyClient {
     return this.post(`/login`, authCredentialsDto);
   }
 
+  async registerClient(data: any): Promise<{ message: string }> {
+    try {
+      const response = await this.post('/registrarCliente', data);
+      if (response && typeof response === 'object' && 'message' in response) {
+        return response as { message: string };
+      } else {
+        return { message: 'Registro exitoso' }; // Mensaje por defecto en caso de falta de mensaje
+      }
+    } catch (error) {
+      console.error('Error en el registro:', error);
+      throw error;
+    }
+  }
+
   //Empleados
   async getEmpleados() {
     return this.get(`/empleados`);

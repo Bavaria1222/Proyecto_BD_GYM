@@ -1093,3 +1093,25 @@ BEGIN
     DELETE FROM Membresia WHERE id_membresia = p_id_membresia;
 END eliminar_membresia;
 /
+
+
+--Procedure para registrar cliente (usuario)
+
+CREATE OR REPLACE PROCEDURE agregar_cliente (
+    p_id_gimnasio IN INT,
+    p_nombre IN VARCHAR2,
+    p_apellido1 IN VARCHAR2,
+    p_apellido2 IN VARCHAR2,
+    p_cedula IN VARCHAR2,
+    p_email IN VARCHAR2,
+    p_estado IN VARCHAR2,
+    p_tel_habitacion IN INT,
+    p_celular IN INT,
+    p_fecha_registro IN DATE
+) AS
+BEGIN
+    INSERT INTO Cliente (id_gimnasio, nombre, apellido1, apellido2, cedula, email, estado, tel_habitacion, celular, fecha_registro)
+    VALUES (p_id_gimnasio, p_nombre, p_apellido1, p_apellido2, p_cedula, p_email, p_estado, p_tel_habitacion, p_celular, p_fecha_registro);
+END agregar_cliente;
+/
+

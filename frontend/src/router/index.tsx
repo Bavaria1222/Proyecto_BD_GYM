@@ -3,6 +3,7 @@ import type { RouteObject } from 'react-router';
 import { Navigate, Outlet } from 'react-router-dom';
 import { Layout } from 'src/layouts';
 import Login from 'src/pages/auth/Login';
+import Register from 'src/pages/auth/Register';
 import Empleado from 'src/pages/empleados/empleado';
 import EmpleadosLista from 'src/pages/empleados/empleados';
 import GimnasiosLista from 'src/pages/gimnasio/gimnasios';
@@ -36,15 +37,11 @@ export const routesOutlets: RouteObject[] = [
   {
     path: '/',
     element: (
-      /*<ProtectedRoute>
+      <ProtectedRoute>
         <Layout>
           <Outlet />
         </Layout>
       </ProtectedRoute>
-*/
-      <Layout>
-        <Outlet />
-      </Layout>
     ),
     children: [
       { index: true, element: <HomePage /> },
@@ -61,6 +58,7 @@ export const routesOutlets: RouteObject[] = [
       { path: '/membresia/:id', element: <Membresia /> },
     ],
   },
-  { path: 'login', element: <Login /> },
+  { path: 'login', element: <Login /> },        // Ruta de login sin Layout
+  { path: 'register', element: <Register /> },  // Ruta de registro sin Layout
   { path: '*', element: <Error404Page /> },
 ];

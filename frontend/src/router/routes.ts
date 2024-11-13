@@ -3,6 +3,7 @@ export const routes = {
   dummy: '',
   pageExample: '/page-example',
   login: '/login',
+  register: '/register',
   empleados: '/empleados',
   empleado: '/empleado',
   gimnasios: '/gimnasios',

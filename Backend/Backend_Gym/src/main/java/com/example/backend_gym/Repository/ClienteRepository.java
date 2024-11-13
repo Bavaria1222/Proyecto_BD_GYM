@@ -222,6 +222,17 @@ public class ClienteRepository   {
 
 
     public boolean agregarClienteYCrearUsuario(CrearClienteDTO clienteDTO, String password) {
+        // Verificación de la cédula
+        if (clienteDTO.getCedula() == null || clienteDTO.getCedula().trim().isEmpty()) {
+            System.out.println("Error: El campo 'cedula' no puede ser nulo o vacío.");
+            return false;
+        }
+
+        // Verificar si la fecha de registro está nula y asignar la fecha actual
+        if (clienteDTO.getFechaRegistro() == null) {
+            clienteDTO.setFechaRegistro(new java.util.Date()); // Asigna la fecha actual si no está definida
+        }
+
         return jdbcTemplate.execute((Connection con) -> {
             // Iniciar la transacción
             con.setAutoCommit(false);
