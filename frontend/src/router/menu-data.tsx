@@ -130,11 +130,11 @@ export const useMenuItems = (): MenuItem[] => {
             subMenu: [
               {
                 title: 'Listado de Cursos',
-                route: routes.dummy,
+                route: routes.cursos,
               },
               {
                 title: 'Historial de Cursos',
-                route: routes.dummy,
+                route: routes.historialCursos,
               },
             ],
           },

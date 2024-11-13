@@ -12,4 +12,6 @@ export const routes = {
   membresias: '/membresias',
   membresia: '/membresia',
   bitacoras: '/bitacoras',
+  cursos: '/cursos',
+  historialCursos: '/historial-cursos',
 };
