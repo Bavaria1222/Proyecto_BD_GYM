@@ -10,6 +10,9 @@ import MaquinasLista from 'src/pages/maquina/maquinas';
 // import { Layout as LayoutBase } from "src/layouts/base";
 import { routes } from './routes';
 import Maquina from 'src/pages/maquina/maquina';
+import MembresiasLista from 'src/pages/membresias/membresias';
+import Membresia from 'src/pages/membresias/membresia';
+
 
 function ProtectedRoute({ children }) {
   const userData = JSON.parse(localStorage.getItem('userData'));
@@ -53,6 +56,9 @@ export const routesOutlets: RouteObject[] = [
       { path: 'maquinas', element: <MaquinasLista /> },
       { path: 'maquina', element: <Maquina /> },
       { path: '/maquina/:id', element: <Maquina /> },
+      { path: 'membresias', element: <MembresiasLista /> },
+      { path: 'membresia', element: <Membresia /> },
+      { path: '/membresia/:id', element: <Membresia /> },
     ],
   },
   { path: 'login', element: <Login /> },

@@ -8,4 +8,7 @@ export const routes = {
   gimnasios: '/gimnasios',
   maquinas: '/maquinas',
   maquina: '/maquina',
+  membresias: '/membresias',
+  membresia: '/membresia',
+
 };
