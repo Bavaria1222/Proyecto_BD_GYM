@@ -6,10 +6,14 @@ import Login from 'src/pages/auth/Login';
 import Empleado from 'src/pages/empleados/empleado';
 import EmpleadosLista from 'src/pages/empleados/empleados';
 import GimnasiosLista from 'src/pages/gimnasio/gimnasios';
+import MaquinasLista from 'src/pages/maquina/maquinas';
 // import { Layout as LayoutBase } from "src/layouts/base";
 import { routes } from './routes';
+import Maquina from 'src/pages/maquina/maquina';
 import MembresiasLista from 'src/pages/membresias/membresias';
 import Membresia from 'src/pages/membresias/membresia';
+import CursosLista from 'src/pages/cursos/cursos';
+
 
 function ProtectedRoute({ children }) {
   const userData = JSON.parse(localStorage.getItem('userData'));
@@ -50,9 +54,15 @@ export const routesOutlets: RouteObject[] = [
       { path: 'empleado', element: <Empleado /> },
       { path: 'empleado/:id', element: <Empleado /> },
       { path: 'gimnasios', element: <GimnasiosLista /> },
+      { path: 'maquinas', element: <MaquinasLista /> },
+      { path: 'maquina', element: <Maquina /> },
+      { path: '/maquina/:id', element: <Maquina /> },
       { path: 'membresias', element: <MembresiasLista /> },
       { path: 'membresia', element: <Membresia /> },
       { path: '/membresia/:id', element: <Membresia /> },
+      { path: 'cursos', element: <CursosLista /> },
+      { path: 'curso', element: <Curso /> },
+      { path: '/curso/:id', element: <Curso /> },
     ],
   },
   { path: 'login', element: <Login /> },

@@ -86,5 +86,34 @@ export class AuthClient extends CandyClient {
     return this.get(`/Gimnnasios/todos`);
   }
 
+  //Maquinas
+  async getMaquinas() {
+    return this.get(`/ObtenerMaquinas`);
+  }
+ 
+  async getMaquina(id: string) {
+    return this.get(`/ObtenerMaquinas/${id}`);
+  }
+  async postMaquina(MaquinaDto) {
+    return this.post(`/CrearMaquina`, MaquinaDto);
+  }
+  
+  //Bitacoras
+  async getBitacoras() {
+    return this.get(`/ObtenerBitacoras `);
+  }
 
+   //Cursos
+   async getCursos() {
+    return this.get(`/ObtenerCursos`);
+  }
+  async getCurso(id: string) {
+    return this.get(`/ObtenerCursos/${id}`);
+  }
+  async patchStatusCurso(id: string, estado: string) {
+    return this.patch(`/ActualizarCurso/${id}/${estado}`);
+  }
+  async postCurso(CursoDto) {
+    return this.post(`/CrearCurso`, CursoDto);
+  }
 }

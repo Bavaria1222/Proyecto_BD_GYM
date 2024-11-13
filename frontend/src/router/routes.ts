@@ -8,4 +8,6 @@ export const routes = {
   gimnasios: '/gimnasios',
   membresias: '/membresias',
   membresia: '/membresia',
+  cursos: '/cursos',
+  curso: '/curso',
 };
