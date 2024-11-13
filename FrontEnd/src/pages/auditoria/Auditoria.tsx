@@ -22,7 +22,7 @@ export function Auditoria(): React.JSX.Element {
     setError('');
     try {
       const data = await GetAuditoria(fechaInicio, fechaFin);
-      setAuditoriaData(data);
+      setAuditoriaData(Array.isArray(data) ? data : []);
     } catch (err) {
       console.error(err);
       setError('Error al obtener los datos de auditoría');
@@ -70,20 +70,19 @@ export function Auditoria(): React.JSX.Element {
           </TableRow>
         </TableHead>
         <TableBody>
-          {auditoriaData.map((entry, index) => (
-            <TableRow key={index}>
-              <TableCell>{entry.username}</TableCell>
-              <TableCell>{entry.tabla}</TableCell>
-              <TableCell>{entry.accion}</TableCell>
-              <TableCell>{entry.fechaHora}</TableCell>
-              <TableCell>{entry.returncode}</TableCell>
-              <TableCell>{entry.osUsername}</TableCell>
-              <TableCell>{entry.userhost}</TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
+  {auditoriaData.map((entry, index) => (
+    <TableRow key={`${entry.username}-${entry.fechaHora}-${entry.accion}-${index}`}>
+      <TableCell>{entry.username}</TableCell>
+      <TableCell>{entry.tabla}</TableCell>
+      <TableCell>{entry.accion}</TableCell>
+      <TableCell>{entry.fechaHora}</TableCell>
+      <TableCell>{entry.returncode}</TableCell>
+      <TableCell>{entry.osUsername}</TableCell>
+      <TableCell>{entry.userhost}</TableCell>
+    </TableRow>
+  ))}
+</TableBody>
       </Table>
     </Container>
   );
-  
 }
