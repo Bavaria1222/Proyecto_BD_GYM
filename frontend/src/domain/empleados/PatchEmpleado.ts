@@ -1,15 +1,13 @@
-import UsersClient from 'src/data/UsersClient';
-import { UpdateUserDTO } from 'src/models/users';
+import { AuthClient } from "../../data/AuthClient";
 
-async function PatchUser(token: string, id: string, updateUserDto: UpdateUserDTO): Promise<void> {
-  const usersClient = new UsersClient(token);
-
+async function PatchEmpleado(id: string, updateUserDto) {
   try {
-    await usersClient.users.update(id, updateUserDto);
-  } catch (e) {
-    console.log(e);
-    throw e;
+    const authClient = new AuthClient();
+    await authClient.patchEmpleado(id, updateUserDto);
+  } catch (error) {
+    console.error("PatchStatusEmpleado error", error);
+    throw error;
   }
 }
 
-export default PatchUser;
+export default PatchEmpleado;

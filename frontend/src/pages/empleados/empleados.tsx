@@ -7,7 +7,7 @@ import { getActionText } from 'src/utils/actions-utils';
 import { routes } from 'src/router/routes';
 import GetEmpleados from 'src/domain/empleados/GetEmpleados';
 import { useNavigate } from 'react-router-dom';
-
+import PatchStatusEmpleado from 'src/domain/empleados/PatchEstadoEmpleado';
 const EmpleadosLista = () => {
     const [selectedRow, setSelectedRow] = useState<any | null>(null);
     const navigate = useNavigate();
@@ -34,8 +34,10 @@ const EmpleadosLista = () => {
 
     const onProcess = async () => {
         const id = selectedRow.cedula;
+        const estado = selectedRow.cedula;
+
         try {
-            // await PatchRoleStatus(id);
+            await PatchStatusEmpleado(id, estado);
         } catch (error) {
             console.log(error);
             throw error;
@@ -54,80 +56,11 @@ const EmpleadosLista = () => {
             handleEdit
         ),
     ];
-    /*
-        const loadEmpleados = useCallback(async () => {
-            const empleados = await GetEmpleados();
-            return Array.isArray(empleados) ? empleados : [];
-        }, []);
-    */
 
-
-
-    const loadEmpleados = async () => {
-        const list = [
-            {
-                idUsuario: 35,
-                nombre: "Juan",
-                apellido1: "Perez",
-                apellido2: "Gomez",
-                cedula: "87654321",
-                telHabitacion: 1234567,
-                fechaContratacion: "2024-10-25",
-                email: "juan.perez@example.com",
-                rol: "Mantenimiento",
-                estado: "activo"
-            },
-            {
-                idUsuario: 31,
-                nombre: "Carlos",
-                apellido1: "Garcia",
-                apellido2: "Perez",
-                cedula: "12345678",
-                telHabitacion: 1234567,
-                fechaContratacion: "2024-11-04",
-                email: "carlos.garcia@example.com",
-                rol: "Instructor",
-                estado: "activo"
-            },
-            {
-                idUsuario: 36,
-                nombre: "Carlos",
-                apellido1: "Martinez",
-                apellido2: "Lopez",
-                cedula: "87654322",
-                telHabitacion: 1234567,
-                fechaContratacion: "2024-10-25",
-                email: "carlos.martinez@example.com",
-                rol: "Instructor",
-                estado: "activo"
-            },
-            {
-                idUsuario: 38,
-                nombre: "Carlos",
-                apellido1: "Martinez",
-                apellido2: "Lopez",
-                cedula: "123123",
-                telHabitacion: 1234567,
-                fechaContratacion: "2024-10-25",
-                email: "carlos.123@example.com",
-                rol: "Instructor",
-                estado: "activo"
-            },
-            {
-                idUsuario: 61,
-                nombre: "123123",
-                apellido1: "string",
-                apellido2: "string",
-                cedula: "304990435",
-                telHabitacion: 0,
-                fechaContratacion: "2024-11-04",
-                email: "string",
-                rol: "string",
-                estado: "string"
-            }
-        ];
-        return list;
-    };
+    const loadEmpleados = useCallback(async () => {
+        const empleados = await GetEmpleados();
+        return Array.isArray(empleados) ? empleados : [];
+    }, []);
 
     const handleSelectItem = (row: any) => {
         setSelectedRow(row);

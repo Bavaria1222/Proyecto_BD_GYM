@@ -1,14 +1,14 @@
-import UsersClient from 'src/data/UsersClient';
-import { UserDTO } from 'src/models/users';
+import { AuthClient } from "src/data/AuthClient";
 
-async function GetUser(token: string, id: string): Promise<UserDTO> {
-  const usersClient = new UsersClient(token);
 
+async function GetUser(id: string) {
   try {
-    return await usersClient.users.get(id);
-  } catch (e) {
-    console.log(e);
-    throw e;
+    const authClient = new AuthClient();
+    const users = await authClient.getEmpleado(id);
+    return users;
+  } catch (error) {
+    console.error("GetUser error", error);
+    throw error;
   }
 }
 

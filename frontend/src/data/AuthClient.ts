@@ -46,21 +46,27 @@ export class AuthClient extends CandyClient {
     return this.get(`/empleados`);
   }
 
+
+  async getEmpleado(id: string) {
+    return this.get(`/cedula/${id}`);
+  }
+
+  async postEmpleados(empleadoDto) {
+    return this.post(`/agregarEmpleado`, empleadoDto);
+  }
+
+  async patchStatusEmpleado(id: string, estado: string) {
+    return this.patch(`/actualizarEstadoEmpleado/${id}/${estado}`);
+  }
+
+  async patchEmpleado(id: string, updateUserDTO) {
+    return this.patch(`/actualizarEmpleado/${id}`, updateUserDTO);
+  }
   //Gimnasio
 
   async getGimnasios() {
     return this.get(`/Gimnnasio`);
   }
 
-  async patchStatus(id: string) {
-    return this.patch<void>(`/user/status/${id}`);
-  }
 
-  async invite(inviteUserDTO) {
-    return this.post<void>(`/user/invite`, inviteUserDTO);
-  }
-
-  async patchUser(id: string, updateUserDTO) {
-    return this.patch<void>(`/user/${id}`, updateUserDTO);
-  }
 }
