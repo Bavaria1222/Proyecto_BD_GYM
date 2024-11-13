@@ -5,10 +5,7 @@ import com.example.backend_gym.Entity.Membresia;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
-import java.sql.CallableStatement;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.Types;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -66,7 +63,6 @@ public class MembresiaRepository {
         });
     }
 
-    // Obtener todas las membresías
     public List<Membresia> obtenerTodasLasMembresias() {
         return jdbcTemplate.execute((Connection con) -> {
             try (CallableStatement callableStatement = con.prepareCall("{call obtener_todas_las_membresias(?)}")) {
@@ -78,14 +74,29 @@ public class MembresiaRepository {
                     while (resultSet.next()) {
                         Membresia membresia = new Membresia();
                         Cliente cliente = new Cliente();
+
+                        // Asignación de los datos del cliente
                         cliente.setIdCliente(resultSet.getLong("id_cliente"));
+                        cliente.setNombre(resultSet.getString("nombre"));
+                        cliente.setApellido1(resultSet.getString("apellido1"));
+                        cliente.setApellido2(resultSet.getString("apellido2"));
+                        cliente.setCedula(resultSet.getString("cedula"));
+                        cliente.setEmail(resultSet.getString("email"));
+                        cliente.setEstado(resultSet.getString("cliente_estado"));
+                        cliente.setTelHabitacion(Integer.valueOf(resultSet.getString("tel_habitacion")));
+                        cliente.setCelular(Integer.valueOf(resultSet.getString("celular")));
+                        cliente.setFechaRegistro(resultSet.getDate("fecha_registro") != null ? Date.valueOf(resultSet.getDate("fecha_registro").toLocalDate()) : null);
+
                         membresia.setCliente(cliente);
+
+                        // Asignación de los datos de la membresía
                         membresia.setIdMembresia(resultSet.getLong("id_membresia"));
                         membresia.setTipoMembresia(resultSet.getString("tipo_membresia"));
                         membresia.setFechaInicio(resultSet.getDate("fecha_inicio").toLocalDate());
                         membresia.setFechaFin(resultSet.getDate("fecha_fin").toLocalDate());
                         membresia.setEstado(resultSet.getString("estado"));
                         membresia.setMonto(resultSet.getDouble("monto"));
+
                         membresias.add(membresia);
                     }
                 }
@@ -93,7 +104,6 @@ public class MembresiaRepository {
             }
         });
     }
-
     // Actualizar Membresia
     public boolean actualizarMembresia(Long id, Membresia membresia) {
         // Parámetro de salida para filas afectadas

@@ -421,7 +421,7 @@ CREATE OR REPLACE PROCEDURE obtener_datos_empleado (
     p_fecha_contratacion OUT DATE
 ) IS
 BEGIN
-    -- Consulta para obtener los datos del empleado por cédula
+    -- Consulta para obtener los datos del empleado por cï¿½dula
     SELECT id_usuario, nombre, apellido1, apellido2, cedula, email, estado, tel_habitacion, fecha_contratacion
     INTO p_id_usuario, p_nombre, p_apellido1, p_apellido2, p_cedula_out, p_email, p_estado, p_tel_habitacion, p_fecha_contratacion
     FROM EMPLEADO
@@ -438,9 +438,9 @@ EXCEPTION
         p_estado := NULL;
         p_tel_habitacion := NULL;
         p_fecha_contratacion := NULL;
-        DBMS_OUTPUT.PUT_LINE('No se encontró el empleado con la cédula ' || p_cedula);
+        DBMS_OUTPUT.PUT_LINE('No se encontrï¿½ el empleado con la cï¿½dula ' || p_cedula);
     WHEN OTHERS THEN
-        DBMS_OUTPUT.PUT_LINE('Ocurrió un error: ' || SQLERRM);
+        DBMS_OUTPUT.PUT_LINE('Ocurriï¿½ un error: ' || SQLERRM);
 END obtener_datos_empleado;
 /
 
@@ -1035,15 +1035,30 @@ END obtener_membresia_por_id;
 /
 
 
+CREATE OR REPLACE PROCEDURE eliminar_membresia (
+    p_id_membresia IN INT
+) AS
+BEGIN
+    DELETE FROM Membresia WHERE id_membresia = p_id_membresia;
+END eliminar_membresia;
+/
+
+
+select * from membresia;
+
+
 CREATE OR REPLACE PROCEDURE obtener_todas_las_membresias (
     p_membresias OUT SYS_REFCURSOR
 ) AS
 BEGIN
     OPEN p_membresias FOR
-        SELECT id_membresia, id_cliente, tipo_membresia, fecha_inicio, fecha_fin, estado, monto
-        FROM Membresia;
+        SELECT m.id_membresia, m.id_cliente, m.tipo_membresia, m.fecha_inicio, m.fecha_fin, m.estado, m.monto,
+               c.nombre, c.apellido1, c.apellido2, c.cedula, c.email, c.estado AS cliente_estado,
+               c.tel_habitacion, c.celular, c.fecha_registro
+        FROM Membresia m
+        JOIN Cliente c ON m.id_cliente = c.id_cliente;
 END obtener_todas_las_membresias;
-/
+
 
 
 CREATE OR REPLACE PROCEDURE actualizar_membresia (
