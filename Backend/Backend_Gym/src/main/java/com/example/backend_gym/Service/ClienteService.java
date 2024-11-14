@@ -43,6 +43,12 @@ public class ClienteService {
 
 
     public boolean agregarClienteYCrearUsuario(CrearClienteDTO clienteDTO, String password) {
+        if (clienteDTO.getFechaRegistro() == null) {
+            clienteDTO.setFechaRegistro(new java.util.Date()); // Asigna la fecha actual si está null
+        }
+        if (clienteDTO.getEstado() == null || clienteDTO.getEstado().isEmpty()) {
+            clienteDTO.setEstado("activo"); // Asigna el estado predeterminado
+        }
         return clienteRepository.agregarClienteYCrearUsuario(clienteDTO, password);
     }
 }

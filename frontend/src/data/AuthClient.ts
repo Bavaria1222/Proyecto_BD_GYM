@@ -41,26 +41,97 @@ export class AuthClient extends CandyClient {
     return this.post(`/login`, authCredentialsDto);
   }
 
+  async registerClient(data: any): Promise<{ message: string }> {
+    try {
+      const response = await this.post('/registrarCliente', data);
+      if (response && typeof response === 'object' && 'message' in response) {
+        return response as { message: string };
+      } else {
+        return { message: 'Registro exitoso' }; // Mensaje por defecto en caso de falta de mensaje
+      }
+    } catch (error) {
+      console.error('Error en el registro:', error);
+      throw error;
+    }
+  }
+
   //Empleados
   async getEmpleados() {
     return this.get(`/empleados`);
   }
 
+
+  async getEmpleado(id: string) {
+    return this.get(`/cedula/${id}`);
+  }
+
+  async postEmpleados(empleadoDto) {
+    return this.post(`/agregarEmpleado`, empleadoDto);
+  }
+
+  async patchStatusEmpleado(id: string, estado: string) {
+    return this.patch(`/actualizarEstadoEmpleado/${id}/${estado}`);
+  }
+
+  async patchEmpleado(id: string, updateUserDTO) {
+    return this.patch(`/actualizarEmpleado/${id}`, updateUserDTO);
+  }
+  //Membresias
+  async getMembresias() {
+    return this.get(`/membresias/todas`);
+  }
+
+
+  async getMembresia(id: string) {
+    return this.get(`/membresias/${id}`);
+  }
+
+  async postMembresias(membresiaDto) {
+    return this.post(`/membresias/crear`, membresiaDto);
+  }
+
+  async patchMembresia(id: string, updatemembresiaDto) {
+    return this.patch(`membresias/actualizar/${id}`, updatemembresiaDto);
+  }
+
   //Gimnasio
 
   async getGimnasios() {
-    return this.get(`/Gimnnasio`);
+    return this.get(`/Gimnnasios/todos`);
   }
 
-  async patchStatus(id: string) {
-    return this.patch<void>(`/user/status/${id}`);
+  //Maquinas
+  async getMaquinas() {
+    return this.get(`/ObtenerMaquinas`);
   }
 
-  async invite(inviteUserDTO) {
-    return this.post<void>(`/user/invite`, inviteUserDTO);
+  async getMaquina(id: string) {
+    return this.get(`/ObtenerMaquinas/${id}`);
+  }
+  async postMaquina(MaquinaDto) {
+    return this.post(`/CrearMaquina`, MaquinaDto);
   }
 
-  async patchUser(id: string, updateUserDTO) {
-    return this.patch<void>(`/user/${id}`, updateUserDTO);
+  // Cursos
+
+  // Obtener todos los cursos
+  async getCursos() {
+    return this.get(`/ObtenerCursos`);
   }
+
+  // Crear un curso
+  async postCurso(cursoDto: any) {
+    return this.post(`/CrearCurso`, cursoDto);
+  }
+
+  // Obtener historial de cursos
+  async getHistorialCursos() {
+    return this.get(`/ObtenerhistorialCursos`);
+  }
+
+  // Crear un historial de curso
+  async postHistorialCurso(historialCursoDto: any) {
+    return this.post(`/CrearhistorialCurso`, historialCursoDto);
+  }
+
 }

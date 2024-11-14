@@ -79,7 +79,7 @@ export const useMenuItems = (): MenuItem[] => {
                 <ClipboardDocumentCheckIcon />
               </Box>
             ),
-            route: routes.dummy,
+            route: routes.membresias,
           },
           {
             title: 'Rutina',
@@ -103,7 +103,7 @@ export const useMenuItems = (): MenuItem[] => {
                 <CogIcon />
               </Box>
             ),
-            route: routes.dummy,
+            route: routes.maquinas,
           },
           {
             title: 'Bitácora',
@@ -115,7 +115,7 @@ export const useMenuItems = (): MenuItem[] => {
                 <JournalIcon />
               </Box>
             ),
-            route: routes.dummy,
+            route: routes.bitacoras,
           },
           {
             title: 'Cursos',
@@ -130,11 +130,11 @@ export const useMenuItems = (): MenuItem[] => {
             subMenu: [
               {
                 title: 'Listado de Cursos',
-                route: routes.dummy,
+                route: routes.cursos,
               },
               {
                 title: 'Historial de Cursos',
-                route: routes.dummy,
+                route: routes.historialCursos,
               },
             ],
           },

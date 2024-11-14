@@ -7,6 +7,7 @@ public class UserRoutingDataSource extends AbstractRoutingDataSource  {
     protected Object determineCurrentLookupKey() {
         String currentUser = DynamicUserContextHolder.getCurrentUser();
         System.out.println("UserRoutingDataSource - Usuario actual en el contexto: " + currentUser);
-        return currentUser;
+        // Si no hay un usuario en el contexto, utiliza el DataSource predeterminado
+        return currentUser != null ? currentUser : "system";
     }
 }

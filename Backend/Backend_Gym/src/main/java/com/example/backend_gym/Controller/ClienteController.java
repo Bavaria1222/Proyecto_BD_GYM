@@ -11,7 +11,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import com.example.backend_gym.DTO.ClienteDTO.ClienteDTO;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 @RestController
@@ -62,15 +64,16 @@ public class ClienteController {
         }
     }
     @PostMapping("/registrarCliente")
-    public ResponseEntity<String> agregarCliente(@RequestBody CrearClienteDTO clienteDT0) {
-        boolean clienteAgregado = clienteService.agregarClienteYCrearUsuario(clienteDT0, clienteDT0.getPassword());
+    public ResponseEntity<Map<String, String>> agregarCliente(@RequestBody CrearClienteDTO clienteDTO) {
+        boolean clienteAgregado = clienteService.agregarClienteYCrearUsuario(clienteDTO, clienteDTO.getPassword());
 
+        Map<String, String> response = new HashMap<>();
         if (clienteAgregado) {
-            return ResponseEntity.ok("Cliente agregado correctamente y usuario creado.");
+            response.put("message", "Cliente agregado correctamente y usuario creado.");
+            return ResponseEntity.ok(response);
         } else {
-            return ResponseEntity.status(400).body("La cédula ya existe en la tabla de empleados.");
+            response.put("message", "La cédula ya existe en la tabla de empleados.");
+            return ResponseEntity.status(400).body(response);
         }
     }
-
-
 }

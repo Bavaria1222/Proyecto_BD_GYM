@@ -49,7 +49,7 @@ public class EmpleadoController {
     }
 
 
-    @PutMapping("/ActualizarEmpleado/{cedula}")
+    @PutMapping("/actualizarEmpleado/{cedula}")
     public ResponseEntity<String> actualizarEmpleado(
             @PathVariable String cedula,
             @RequestBody ActualizarEmpleadoDTO empleadoDTO) {
@@ -61,7 +61,7 @@ public class EmpleadoController {
             return ResponseEntity.status(404).body("Empleado no encontrado");
         }
     }
-    @PutMapping("/empleados/{cedula}/{estado}")
+    @PutMapping("/actualizarEstadoEmpleado/{cedula}/{estado}")
     public ResponseEntity<String> actualizarEstadoEmpleado(
             @PathVariable String cedula,
             @PathVariable String estado) {

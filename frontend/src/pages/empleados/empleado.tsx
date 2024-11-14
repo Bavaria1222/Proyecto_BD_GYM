@@ -4,6 +4,10 @@ import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import TransactionModalManager from 'src/pages/generic/modal-confirmation';
 import { routes } from 'src/router/routes';
 import CandyPage from '../generic/page';
+import { PostEmpleado } from 'src/domain/empleados/PostEmpleado';
+import PatchEmpleado from 'src/domain/empleados/PatchEmpleado';
+import GetUser from 'src/domain/empleados/GetEmpleado';
+
 
 const Empleado = () => {
   const params = useParams();
@@ -27,23 +31,33 @@ const Empleado = () => {
   const [titulo, setTitulo] = useState<string>('Agregar');
   const maxNombreCharacters = 100;
   const maxDescripcionCharacters = 250;
-
+  interface Empleado {
+    nombre: string;
+    apellido1: string;
+    apellido2: string;
+    cedula: string;
+    password?: string;
+    telHabitacion: string;
+    fechaContratacion: string;
+    email: string;
+    rol: string;
+    estado: string;
+  }
   // Función para cargar el empleado si params.id está presente
   const loadUser = async (id: string) => {
-    // Suponiendo que hay una función `GetEmpleado` para obtener los datos del empleado
-    /* const empleado = await GetEmpleado(id);
-        setFormData({
-            nombre: empleado.nombre,
-            apellido1: empleado.apellido1,
-            apellido2: empleado.apellido2,
-            cedula: empleado.cedula,
-            password: '',
-            telHabitacion: empleado.telHabitacion,
-            fechaContratacion: empleado.fechaContratacion,
-            email: empleado.email,
-            rol: empleado.rol,
-            estado: empleado.estado,
-        }); */
+    const empleado = await GetUser(id) as Empleado;
+    setFormData({
+      nombre: empleado.nombre,
+      apellido1: empleado.apellido1,
+      apellido2: empleado.apellido2,
+      cedula: empleado.cedula,
+      password: '',
+      telHabitacion: empleado.telHabitacion,
+      fechaContratacion: empleado.fechaContratacion,
+      email: empleado.email,
+      rol: empleado.rol,
+      estado: empleado.estado,
+    });
   };
 
   // Verificar si se trata de una edición o una creación
@@ -87,7 +101,7 @@ const Empleado = () => {
       try {
         console.log('Updating employee:', dataToSend);
         // Aquí va la llamada a la API para actualizar, por ejemplo:
-        // await PatchEmpleado(userId, dataToSend);
+        await PatchEmpleado(userId, dataToSend);
       } catch (error) {
         console.log('Error updating employee:', error);
       }
@@ -95,7 +109,7 @@ const Empleado = () => {
       try {
         console.log('Creating employee:', dataToSend);
         // Aquí va la llamada a la API para crear, por ejemplo:
-        // await PostEmpleado(dataToSend);
+        await PostEmpleado(dataToSend);
       } catch (error) {
         console.log('Error creating employee:', error);
       }
